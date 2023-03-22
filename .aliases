@@ -60,8 +60,12 @@ configuration_alias hosts /etc/hosts
 configuration_alias ssh-daemon /etc/ssh/sshd_config 'sudo systemctl reload sshd' 'Reloading SSH Daemon configuration...'
 configuration_alias ssh-client ~/.ssh/config
 configuration_alias nano ~/.nanorc
-configuration_alias apache /etc/httpd/conf/httpd.conf 'sudo systemctl reload httpd' 'Reloading Apache...'
-configuration_alias php /etc/php/php.ini 'sudo systemctl reload httpd' 'Reloading Apache...'
+
+# Apache
+if systemctl is-active --quiet httpd; then
+	configuration_alias apache /etc/httpd/conf/httpd.conf 'sudo systemctl reload httpd' 'Reloading Apache...'
+	configuration_alias php /etc/php/php.ini 'sudo systemctl reload httpd' 'Reloading Apache...'
+fi
 
 #
 # Bash Configurations
