@@ -1,0 +1,9 @@
+[user]
+	email = sorucoder+github@gmail.com
+	name  = sorucoder
+[safe]
+	directory = /opt/
+[core]
+	editor = nano
+[protocol "file"]
+	allow = always

@@ -1,0 +1,481 @@
+#
+# Options
+#
+
+set afterends
+#set allow_insecure_backup
+#set atblanks
+set autoindent
+#set backup
+#set backupdir "."
+#set boldtext
+#set bookstyle
+#set brackets ""'>]}"
+#set breaklonglines
+set casesensitive
+#set constantshow
+#set cutfromcursor
+#set emptyline
+#set fill -8
+#set guidestripe 80
+#set historylog
+set indicator
+#set jumpyscrolling
+set linenumbers
+#set locking
+set matchbrackets "(<[{)>]}"
+#set minibar
+set mouse
+#set multibuffer
+#set noconvert
+#set nohelp
+#set nonewlines
+#set operatingdir "/"
+set positionlog
+#set preserve
+#set punct "!.?"
+set quickblank
+set quotestr "^([ ]*([!#%:;>|}]|//))"
+#set rawsequences
+#set rebinddelete
+#set regexp
+#set saveonhome
+#set showcursor
+set smarthome
+#set softwrap
+#set speller "program [argument ...]"
+set stateflags
+set tabsize 4
+#set tabstospaces
+set trimblanks
+#set unix
+#set whitespace "»⋅"
+#set wordbounds
+set wordchars "<_>.-"
+set zap
+#set zero
+
+#
+# Theme
+#
+
+set titlecolor bold,#fff,#00f
+set promptcolor italic,#000,#777
+set statuscolor bold,#000,#fff
+set errorcolor bold,#fff,#f00
+set spotlightcolor #000,#0ff
+set selectedcolor #fff,#f0f
+set stripecolor ,#ff0
+set scrollercolor #777
+set numbercolor bold,italic,#fff
+set keycolor bold,#000,#777
+set functioncolor italic,#0ff
+set minicolor bold,#fff,#00f
+
+#
+# Syntax Highlighting
+#
+
+include "/usr/share/nano/*.nanorc"
+include "/usr/share/nano/extra/*.nanorc"
+extendsyntax python tabgives " "
+extendsyntax makefile tabgives "	"
+
+#
+# Key Bindings
+#
+
+## help
+unbind ^G all
+bind F1 help all
+
+## cancel
+#unbind ^C all
+bind ^X cancel search
+bind ^X cancel replace
+bind ^X cancel replacewith
+bind ^X cancel yesno
+bind ^X cancel gotoline
+bind ^X cancel writeout
+bind ^X cancel insert
+bind ^X cancel whereisfile
+bind ^X cancel gotodir
+bind ^X cancel execute
+bind ^X cancel spell
+bind ^X cancel linter
+
+## exit
+bind ^X exit main
+unbind F2 browser
+
+## writeout
+unbind ^O main
+unbind F3 main
+bind M-S writeout main
+
+## savefile
+
+## insert
+unbind ^R main
+unbind F5 main
+unbind Ins main
+bind ^O insert main
+
+## whereis
+unbind ^W all
+unbind F6 all
+bind ^F whereis all
+
+## wherewas
+unbind ^Q all
+
+## findprevious
+unbind M-Q all
+bind F9 findprevious all
+
+## findnext
+unbind M-W all
+bind F10 findnext all
+
+## replace
+unbind ^\ main
+unbind M-R main
+bind ^R replace main
+
+## cut
+unbind ^K main
+#unbind F9 main
+bind M-X cut main
+
+## copy
+unbind M-^ main
+unbind M-6 main
+bind M-C copy main
+
+## paste
+unbind ^U main
+#unbind F10 main
+bind M-V paste main
+
+## zap
+bind ^L zap main
+
+## chopwordleft
+bind ^H chopwordleft main
+
+## chopwordright
+
+## zap
+bind ^L zap main
+
+## cutrestoffile
+unbind M-T main
+unbind ^V execute
+
+## mark
+unbind ^^ main
+unbind M-A main
+
+## location
+unbind ^C main
+unbind F11 main
+bind F2 location main
+
+## wordcount
+unbind M-D main
+bind F3 wordcount main
+
+## execute
+unbind ^T main
+bind F5 execute main
+
+## speller
+unbind F12 main
+unbind ^S execute
+bind F8 speller main
+bind F8 speller execute
+
+## formatter
+unbind M-F main
+unbind ^O execute
+bind F6 formatter main
+bind F6 formatter execute
+
+## linter
+unbind M-B main
+bind F7 linter main
+bind F7 linter execute
+
+## justify
+unbind ^J main
+unbind F4 main
+
+## fulljustify
+unbind M-J main
+unbind ^J execute
+
+## indent
+unbind M-} main
+
+## unindent
+unbind M-{ main
+
+## comment
+unbind M-3 main
+bind ^P comment main
+
+## complete
+unbind ^] main
+bind ^Space complete main
+
+## left
+unbind ^B all
+
+## right
+
+## up
+unbind ^P help
+unbind ^P browser
+
+## down
+unbind ^N all
+
+## scrollup
+unbind M-- all
+unbind M-_ all
+
+## scrolldown
+unbind M-= all
+unbind M-+ all
+
+## center
+
+## prevword
+unbind M-Space all
+
+## nextword
+#unbind ^Space main
+
+## home
+unbind ^A main
+
+## end
+unbind ^E main
+
+## beginpara
+unbind M-( main
+unbind M-9 main
+unbind ^W gotoline
+bind F11 beginpara all
+
+## endpara
+unbind M-) main
+unbind M-0 main
+unbind ^O gotoline
+bind F12 endpara all
+
+## prevblock
+unbind M-7 main
+
+## nextblock
+unbind M-8 main
+
+## pageup
+unbind ^Y all
+#unbind F7 main
+
+## pagedown
+unbind ^V all
+#unbind F8 main
+unbind F8 browser
+
+## firstline
+unbind M-\ all
+unbind ^Y gotoline
+
+## lastline
+unbind M-/ all
+unbind ^V gotoline
+
+## gotoline
+unbind ^/ main
+unbind M-G main
+bind ^G gotoline main
+
+## findbracket
+unbind M-] main
+bind ^] findbracket main
+
+## anchor
+
+## prevanchor
+
+## nextanchor
+
+## prevbuf
+#unbind M-, main
+unbind M-< main
+bind F23 prevbuf main
+
+## nextbuf
+#unbind M-. main
+unbind M-> main
+bind F24 nextbuf main
+
+## verbatim
+#unbind M-V main
+bind ^\ verbatim main
+
+## tab
+#unbind ^I main
+
+## enter
+#unbind ^M main
+
+## delete
+unbind ^D main
+
+## backspace
+unbind ^H main
+
+## recordmacro
+unbind M-: main
+bind F19 recordmacro main
+
+## runmacro
+unbind M-; main
+bind F20 runmacro main
+
+## undo
+unbind M-U main
+bind ^Z undo main
+
+## redo
+unbind M-E main
+bind ^Y redo main
+
+## refresh
+unbind ^L help
+bind F4 refresh main
+bind ^R refresh browser
+
+## suspend
+bind F17 suspend all
+
+## casesens
+unbind M-C search
+unbind M-C replace
+bind ^C casesens search
+bind ^C casesens replace
+
+## regexp
+unbind M-R search
+unbind M-R replace
+bind ^E regexp all
+
+## backwards
+unbind M-B search
+unbind M-B replace
+bind ^F backwards search
+bind ^R backwards replace
+
+## older
+unbind ^P search
+unbind ^P replace
+
+## newer
+unbind ^N search
+unbind ^N replace
+
+## flipreplace
+bind ^R flipreplace search
+bind ^F flipreplace replace
+
+## flipgoto
+unbind ^T all
+bind ^G flipgoto search
+bind ^F flipgoto gotoline
+
+## flipexecute
+bind F5 flipexecute insert
+
+## flippipe
+unbind M-\ execute
+bind ^P flippipe execute
+
+## flipnewbuffer
+unbind M-F all
+bind ^I flipnewbuffer insert
+bind ^N flipnewbuffer execute
+
+## flipconvert
+unbind M-N insert
+
+## dosformat
+unbind M-D writeout
+
+## macformat
+unbind M-M writeout
+
+## append
+unbind M-A writeout
+bind ^A append writeout
+
+## prepend
+unbind M-P writeout
+bind ^P prepend writeout
+
+## backup
+unbind M-B writeout
+bind ^B backup writeout
+
+## discardbuffer
+
+## browser
+bind ^O browser insert
+
+## gotodir
+unbind M-G browser
+
+## firstfile
+
+## lastfile
+
+## nohelp
+#unbind M-X main
+
+## zero
+unbind M-Z main
+
+## constantshow
+#unbind M-C main
+
+## softwrap
+#unbind M-S main
+
+## linenumbers
+unbind M-N main
+
+## whitespacedisplay
+unbind M-P main
+
+## nosyntax
+unbind M-Y main
+
+## smarthome
+unbind M-H main
+
+## autoindent
+unbind M-I main
+
+## cutfromcursor
+unbind M-K main
+
+## breaklonglines
+unbind M-L main
+
+## tabstospaces
+unbind M-O main
+
+## mouse
+unbind M-M main

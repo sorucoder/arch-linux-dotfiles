@@ -1,0 +1,52 @@
+#/usr/bin/env bash
+
+## === Permission and User Management ===
+sudo_alias -b chown='chown -R'
+sudo_alias -b chmod='chmod -R'
+sudo_alias -b chgrp='chgrp -R'
+sudo_alias -b chown='chown -R'
+alias configure-sudoers='sudo visudo'
+
+## === File Information and Management ===
+alias ls='ls --color=auto'
+sudo_alias -b cp
+sudo_alias -b mv
+sudo_alias -b rm
+sudo_alias -b mkdir='mkdir -p'
+sudo_alias -b rmdir='rm -r'
+sudo_alias -b touch='touch'
+sudo_alias -b sln='ln -s'
+
+## === Programs ===
+sudo_alias -b edit="$EDITOR"
+alias pkgmgr='paru'
+sudo_alias pacman
+sudo_alias ufw='ufw'
+sudo_alias sysctl='systemctl'
+sudo_alias reboot='reboot'
+
+# Hererocks
+if [[ -e $HEREROCKS ]]; then
+	lua_installations=($HEREROCKS/lua*)
+	for lua_installation in ${lua_installations[@]}; do
+		version=${lua_installation##$HEREROCKS/lua}
+		alias lua$version="$lua_installation/bin/lua"
+		alias luarocks$version="$lua_installation/bin/luarocks"
+	done
+
+	alias lua-latest="${lua_installations[-1]}/bin/lua"
+	alias luarocks-latest="${lua_installations[-1]}/bin/luarocks"
+	alias moon="$HEREROCKS/lua5.2/bin/moon"
+	alias moonc="$HEREROCKS/lua5.2/bin/moonc"
+fi
+
+## === Program Configuration ===
+configuration_alias hosts /etc/hosts
+configuration_alias ssh-daemon /etc/ssh/sshd_config 'sudo systemctl reload sshd' 'Reloading SSH Daemon configuration...'
+configuration_alias ssh-client ~/.ssh/config
+configuration_alias nano ~/.nanorc
+
+## Bash Configurations
+configuration_alias bash ~/.bashrc 'source ~/.bashrc'
+configuration_alias profile ~/.profile 'source ~/.bashrc' 'Reloading Bash configuration...'
+configuration_alias aliases ~/.aliases 'source ~/.bashrc' 'Reloading Bash configuration...'

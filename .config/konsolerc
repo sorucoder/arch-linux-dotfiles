@@ -1,0 +1,15 @@
+[Desktop Entry]
+DefaultProfile=Oldschool.profile
+
+[General]
+ConfigVersion=1
+
+[KFileDialog Settings]
+detailViewIconSize=16
+
+[MainWindow]
+RestorePositionForNextInstance=false
+ToolBarsMovable=Disabled
+
+[TabBar]
+TabBarPosition=Top
