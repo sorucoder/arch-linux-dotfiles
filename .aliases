@@ -1,13 +1,19 @@
 #/usr/bin/env bash
 
-## === Permission and User Management ===
+#
+# Permission and User Management
+#
+
 sudo_alias -b chown='chown -R'
 sudo_alias -b chmod='chmod -R'
 sudo_alias -b chgrp='chgrp -R'
 sudo_alias -b chown='chown -R'
 alias configure-sudoers='sudo visudo'
 
-## === File Information and Management ===
+#
+# File Information and Management
+#
+
 alias ls='ls --color=auto'
 sudo_alias -b cp
 sudo_alias -b mv
@@ -17,15 +23,21 @@ sudo_alias -b rmdir='rm -r'
 sudo_alias -b touch='touch'
 sudo_alias -b sln='ln -s'
 
-## === Programs ===
+#
+# Programs
+#
+
 sudo_alias -b edit="$EDITOR"
 alias pkgmgr='paru'
 sudo_alias pacman
-sudo_alias ufw='ufw'
+sudo_alias ufw
 sudo_alias sysctl='systemctl'
-sudo_alias reboot='reboot'
+sudo_alias reboot
 
+#
 # Hererocks
+#
+
 if [[ -e $HEREROCKS ]]; then
 	lua_installations=($HEREROCKS/lua*)
 	for lua_installation in ${lua_installations[@]}; do
@@ -40,13 +52,21 @@ if [[ -e $HEREROCKS ]]; then
 	alias moonc="$HEREROCKS/lua5.2/bin/moonc"
 fi
 
-## === Program Configuration ===
+#
+# Program Configuration
+#
+
 configuration_alias hosts /etc/hosts
 configuration_alias ssh-daemon /etc/ssh/sshd_config 'sudo systemctl reload sshd' 'Reloading SSH Daemon configuration...'
 configuration_alias ssh-client ~/.ssh/config
 configuration_alias nano ~/.nanorc
+configuration_alias apache /etc/httpd/conf/httpd.conf 'sudo systemctl reload httpd' 'Reloading Apache...'
+configuration_alias php /etc/php/php.ini 'sudo systemctl reload httpd' 'Reloading Apache...'
 
-## Bash Configurations
+#
+# Bash Configurations
+#
+
 configuration_alias bash ~/.bashrc 'source ~/.bashrc'
 configuration_alias profile ~/.profile 'source ~/.bashrc' 'Reloading Bash configuration...'
 configuration_alias aliases ~/.aliases 'source ~/.bashrc' 'Reloading Bash configuration...'
