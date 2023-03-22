@@ -8,6 +8,11 @@ if [[ $TERM == xterm-256color ]]; then
 	source /usr/share/powerline/bindings/bash/powerline.sh
 fi
 
+# direnv Integration
+if which direnv &> /dev/null; then
+	eval "$(direnv hook bash)"
+fi
+
 # Go integration
 export GOPATH=$HOME/.go
 export PATH=$PATH:$GOPATH/bin
