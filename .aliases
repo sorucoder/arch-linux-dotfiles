@@ -60,6 +60,7 @@ configuration_alias hosts /etc/hosts
 configuration_alias ssh-daemon /etc/ssh/sshd_config 'sudo systemctl reload sshd' 'Reloading SSH Daemon configuration...'
 configuration_alias ssh-client ~/.ssh/config
 configuration_alias nano ~/.nanorc
+configuration_alias git ~/.gitconfig
 
 # Apache
 if systemctl is-active --quiet httpd; then
