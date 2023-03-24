@@ -20,6 +20,11 @@ export PATH=$PATH:$GOPATH/bin
 # CEdev integration
 export PATH=$PATH:$HOME/.CEdev/bin
 
+# AngularJS integration
+if which ng &> /dev/null; then
+	source <(ng completion script)
+fi
+
 # Hererocks integration
 export HEREROCKS=$HOME/.hererocks
 
