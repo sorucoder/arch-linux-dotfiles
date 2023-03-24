@@ -25,6 +25,11 @@ if which ng &> /dev/null; then
 	source <(ng completion script)
 fi
 
+# .NET Tools integration
+if [[ -e ~/.dotnet/tools ]]; then
+	export PATH=$PATH:$HOME/.dotnet/tools
+fi
+
 # Microsoft SQL integration
 if [[ -e /opt/mssql ]]; then
 	export PATH=$PATH:/opt/mssql/bin
