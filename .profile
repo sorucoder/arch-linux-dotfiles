@@ -25,6 +25,16 @@ if which ng &> /dev/null; then
 	source <(ng completion script)
 fi
 
+# Microsoft SQL integration
+if [[ -e /opt/mssql ]]; then
+	export PATH=$PATH:/opt/mssql/bin
+fi
+
+# Microsoft SQL tools integration
+if [[ -e /opt/mssql-tools ]]; then
+	export PATH=$PATH:/opt/mssql-tools/bin
+fi
+
 # Hererocks integration
 export HEREROCKS=$HOME/.hererocks
 
