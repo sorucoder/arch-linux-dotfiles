@@ -20,11 +20,6 @@ export PATH=$PATH:$GOPATH/bin
 # CEdev integration
 export PATH=$PATH:$HOME/.CEdev/bin
 
-# AngularJS integration
-if which ng &> /dev/null; then
-	source <(ng completion script)
-fi
-
 # .NET Tools integration
 if [[ -e ~/.dotnet/tools ]]; then
 	export PATH=$PATH:$HOME/.dotnet/tools
@@ -47,6 +42,11 @@ export HEREROCKS=$HOME/.hererocks
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# AngularJS integration
+if which ng &> /dev/null; then
+	source <(ng completion script)
+fi
 
 # Wine integration
 export WINEDLLOVERRIDES=winemenubuilder.exe=d
