@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+function install_dotfile() {
+	source=$1; shift
+	destination=$1
+
+	if [[ -e $destination ]]; then
+		rm $destination
+	fi
+	ln -s $source $destination
+}
+
+echo 'Installing configuration for Konsole...'
+install_dotfile ~/.konsole/konsolerc ~/.config/konsolerc
+install_dotfile ~/.konsole/Oldschool.profile ~/.local/share/konsole/Oldschool.profile
+install_dotfile ~/.konsole/Pure.colorscheme ~/.local/share/konsole/Pure.colorscheme

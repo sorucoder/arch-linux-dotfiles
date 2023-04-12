@@ -7,12 +7,24 @@
 # Dotfiles Bootstrapping
 #
 cd ~/.dotfiles
-git pull --quiet
-for dotfile in $(find . -path ./.git -prune -o -type f -printf '%P\n'); do
+
+if [[ $(nmcli --colors no networking connectivity) == 'full' ]]; then
+	git pull --quiet origin master
+else
+	echo 'warning: not connected to the internet; not updating dotfiles'
+fi
+
+for dotfile in $(find . -path ./.git -prune -o -type f -name '\.[!\.]*' -printf '%P\n'); do
 	if [[ ! -e ~/$dotfile ]]; then
+		dotroot=$(dirname ~/$dotfile)
+		if [[ ! -e $dotroot ]]; then
+			mkdir -p ~/$dotroot
+		fi
+
 		ln -s ~/.dotfiles/$dotfile ~/$dotfile
 	fi
 done
+
 cd "$OLDPWD"
 
 #
