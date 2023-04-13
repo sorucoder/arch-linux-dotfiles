@@ -17,7 +17,7 @@ fi
 for dotfile in $(find . -path ./.git -prune -o -type f -name '\.[!\.]*' -printf '%P\n'); do
 	if [[ ! -e ~/$dotfile ]]; then
 		dotroot=$(dirname ~/$dotfile)
-		if [[ ! -e $dotroot ]]; then
+		if [[ ! -e ~/$dotroot ]]; then
 			mkdir -p ~/$dotroot
 		fi
 
