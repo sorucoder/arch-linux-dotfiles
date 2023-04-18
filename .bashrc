@@ -17,8 +17,8 @@ fi
 for dotfile in $(find . -type f -not -path './.git/*' -not -path './install/*' -printf '%P\n'); do
 	if [[ ! -e ~/$dotfile ]]; then
 		dotroot=$(dirname ~/$dotfile)
-		if [[ ! -e ~/$dotroot ]]; then
-			mkdir -p ~/$dotroot
+		if [[ ! -e $dotroot ]]; then
+			mkdir -p $dotroot
 		fi
 
 		ln -s ~/.dotfiles/$dotfile ~/$dotfile
