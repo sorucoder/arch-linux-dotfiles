@@ -39,10 +39,15 @@ shopt -s extglob
 
 export EDITOR=nano
 export VISUAL=$EDITOR
+export SUDO_EDITOR=rnano
 
 #
 # Shell Functions
 #
+
+function echo_warn() {
+	echo -e "\e[93m\e[1m$@\e[0m"
+}
 
 function sudo_alias() {
 	if (( $# == 0 )); then
@@ -106,7 +111,7 @@ function configuration_alias() {
 		# If file exists, check to see if sudo would be required.
 		# Otherwise, warn the user and assume sudo is not needed.
 		if [[ ! -e $file ]]; then
-			echo "warning: '$file' not does not exist; configuration_alias will assume non-root editing"
+			echo_warn "warning: '$file' not does not exist; configuration_alias will assume non-root editing"
 			editor=$EDITOR
 		elif ! touch -c $file 2>&1 | grep -q 'Permission denied'; then
 			editor=$EDITOR
@@ -123,7 +128,7 @@ function configuration_alias() {
 		# If file exists, check to see if sudo would be required.
 		# Otherwise, warn the user and assume sudo is not needed.
 		if [[ ! -e $file ]]; then
-			echo "warning: '$file' not does not exist; configuration_alias will assume non-root editing"
+			echo_warn "warning: '$file' not does not exist; configuration_alias will assume non-root editing"
 			editor=$EDITOR
 		elif ! touch -c $file 2>&1 | grep -q 'Permission denied'; then
 			editor=$EDITOR
@@ -141,7 +146,7 @@ function configuration_alias() {
 		# If file exists, check to see if sudo would be required.
 		# Otherwise, warn the user and assume sudo is not needed.
 		if [[ ! -e $file ]]; then
-			echo "warning: '$file' not does not exist; configuration_alias will assume non-root editing"
+			echo_warn "warning: '$file' not does not exist; configuration_alias will assume non-root editing"
 			editor=$EDITOR
 		elif ! touch -c $file 2>&1 | grep -q 'Permission denied'; then
 			editor=$EDITOR

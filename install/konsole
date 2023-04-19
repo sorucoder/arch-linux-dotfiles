@@ -1,16 +1,36 @@
 #!/usr/bin/env bash
 
-function install_dotfile() {
-	source=$1; shift
-	destination=$1
+function install_package() {
+	package=$1; shift
+	message=$1
 
-	if [[ -e $destination ]]; then
-		rm $destination
+	if which paru &> /dev/null; then
+		if ! paru -Qs "^$package\$" &> /dev/null; then
+			if [[ -n $message ]]; then echo -e "\e[34m$message\e[0m"; fi
+			paru -S --noconfirm $package &> /dev/null
+		fi
+	else
+		echo -e '\e[31merror: paru is not installed.\e[0m'
+		echo -e '\e[3mGo to https://github.com/Morganamilo/paru for instructions.\e[0m'
+		exit 1
 	fi
-	ln -s $source $destination
 }
 
-echo 'Installing configuration for Konsole...'
-install_dotfile ~/.konsole/konsolerc ~/.config/konsolerc
-install_dotfile ~/.konsole/Oldschool.profile ~/.local/share/konsole/Oldschool.profile
-install_dotfile ~/.konsole/Pure.colorscheme ~/.local/share/konsole/Pure.colorscheme
+function install_dotfile() {
+	source=$1; shift
+	destination=$1; shift
+	message=$1
+
+	if [[ ! -h $destination ]]; then
+		if [[ -n $message ]]; then echo -e "\e[36m\e[1m$message\e[0m"; fi
+		if [[ -e $destination ]]; then rm $destination; fi
+		ln -s $source $destination
+	fi
+}
+
+install_package konsole 'Installing Konsole...'
+install_package powerline 'Installing powerline...'
+install_package 3270-fonts 'Installing IBM 3270 fonts...'
+install_dotfile ~/.konsole/konsolerc ~/.config/konsolerc 'Installing Konsole configuration...'
+install_dotfile ~/.konsole/Oldschool.profile ~/.local/share/konsole/Oldschool.profile 'Installing Konsole profile...'
+install_dotfile ~/.konsole/Pure.colorscheme ~/.local/share/konsole/Pure.colorscheme 'Installing Konsole color scheme...'
