@@ -1,11 +1,16 @@
 #/usr/bin/env bash
 
 # Powerline integration
-if [[ $TERM == xterm-256color ]]; then
-	powerline-daemon -q
-	POWERLINE_BASH_CONTINUATION=1
-	POWERLINE_BASH_SELECT=1
-	source /usr/share/powerline/bindings/bash/powerline.sh
+if which powerline-daemon &> /dev/null; then
+	if [[ $TERM == xterm-256color ]]; then
+		powerline-daemon -q
+		POWERLINE_BASH_CONTINUATION=1
+		POWERLINE_BASH_SELECT=1
+		source /usr/share/powerline/bindings/bash/powerline.sh
+	fi
+else
+	echo_warn 'warning: powerline is not installed.'
+	echo -e '\e[3mRun ~/.dotfiles/install/konsole to install Konsole and other terminal goodies.\e[0m'
 fi
 
 # direnv Integration
