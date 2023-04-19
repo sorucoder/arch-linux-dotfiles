@@ -26,11 +26,12 @@ function install_dotfile() {
 		if [[ -e $destination ]]; then rm $destination; fi
 		ln -s $source $destination
 	fi
-}
+}s
 
 install_package konsole 'Installing Konsole...'
 install_package powerline 'Installing powerline...'
 install_package 3270-fonts 'Installing IBM 3270 fonts...'
-install_dotfile ~/.konsole/konsolerc ~/.config/konsolerc 'Installing Konsole configuration...'
+install_dotfile ~/.konsole/konsolerc ~/.config/konsolerc 'Installing Konsole general configuration...'
+install_dotfile ~/.konsole/konsoleui.rc ~/home/sorucoder/.local/share/kxmlgui5/konsole/ 'Installing Konsole keyboard shortcuts and toolbar configuration...'
 install_dotfile ~/.konsole/Oldschool.profile ~/.local/share/konsole/Oldschool.profile 'Installing Konsole profile...'
 install_dotfile ~/.konsole/Pure.colorscheme ~/.local/share/konsole/Pure.colorscheme 'Installing Konsole color scheme...'
