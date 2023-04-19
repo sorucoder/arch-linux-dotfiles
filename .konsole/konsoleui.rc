@@ -1,7 +1,7 @@
 <!DOCTYPE gui>
-<gui version="19" translationDomain="kxmlgui5" name="konsole">
+<gui name="konsole" translationDomain="kxmlgui5" version="19">
  <MenuBar alreadyVisited="1">
-  <Menu alreadyVisited="1" name="file" noMerge="1">
+  <Menu name="file" noMerge="1" alreadyVisited="1">
    <text translationDomain="kxmlgui5">&amp;File</text>
    <Action name="new-window"/>
    <Action name="new-tab"/>
@@ -12,11 +12,11 @@
    <DefineGroup name="session-tab-operations"/>
    <Action name="close-window"/>
   </Menu>
-  <Menu alreadyVisited="1" name="edit" noMerge="1">
+  <Menu name="edit" noMerge="1" alreadyVisited="1">
    <text translationDomain="kxmlgui5">&amp;Edit</text>
    <DefineGroup name="session-edit-operations"/>
   </Menu>
-  <Menu alreadyVisited="1" name="view" noMerge="1">
+  <Menu name="view" noMerge="1" alreadyVisited="1">
    <text translationDomain="kxmlgui5">&amp;View</text>
    <Menu name="view-split" noMerge="1">
     <text translationDomain="konsole">Split View</text>
@@ -44,7 +44,7 @@
    <text translationDomain="konsole">Plugins</text>
    <ActionList name="plugin-submenu"/>
   </Menu>
-  <Menu alreadyVisited="1" name="settings" noMerge="1">
+  <Menu name="settings" noMerge="1" alreadyVisited="1">
    <text translationDomain="kxmlgui5">&amp;Settings</text>
    <DefineGroup name="session-settings"/>
    <Action name="manage-profiles"/>
@@ -68,7 +68,7 @@
    <Action name="options_configure"/>
   </Menu>
   <Separator weakSeparator="1"/>
-  <Menu alreadyVisited="1" name="help" noMerge="1">
+  <Menu name="help" noMerge="1" alreadyVisited="1">
    <text translationDomain="kxmlgui5">&amp;Help</text>
    <Action name="help_contents"/>
    <Action name="help_whats_this"/>
@@ -82,7 +82,7 @@
    <Action name="help_about_kde"/>
   </Menu>
  </MenuBar>
- <ToolBar alreadyVisited="1" name="mainToolBar" noMerge="1">
+ <ToolBar name="mainToolBar" noMerge="1" alreadyVisited="1">
   <text translationDomain="kxmlgui5">Main Toolbar</text>
   <index>0</index>
   <Action name="new-tab"/>
@@ -91,48 +91,49 @@
   <Action name="bookmark"/>
  </ToolBar>
  <ActionProperties scheme="Default">
-  <Action shortcut="" name="activate-menu"/>
-  <Action shortcut="" name="add_bookmark"/>
-  <Action shortcut="Ctrl+T, Ctrl+C" name="clone-tab"/>
-  <Action shortcut="Ctrl+W, Ctrl+X" name="close-window"/>
-  <Action shortcut="Ctrl+T, Ctrl+D" name="detach-tab"/>
-  <Action shortcut="Ctrl+P, Ctrl+D" name="detach-view"/>
-  <Action shortcut="Ctrl+P, Ctrl+0" name="equal-size-view"/>
-  <Action shortcut="Ctrl+P, Ctrl+=" name="expand-active-view"/>
-  <Action shortcut="" name="focus-view-above"/>
-  <Action shortcut="" name="focus-view-below"/>
-  <Action shortcut="" name="focus-view-left"/>
-  <Action shortcut="" name="focus-view-right"/>
-  <Action shortcut="Ctrl+T, Ctrl+Tab" name="last-tab"/>
-  <Action shortcut="" name="last-used-tab"/>
-  <Action shortcut="" name="last-used-tab-reverse"/>
-  <Action shortcut="Ctrl+T, Ctrl+Shift+Left" name="move-tab-to-left"/>
-  <Action shortcut="Ctrl+T, Ctrl+Shift+Right" name="move-tab-to-right"/>
-  <Action shortcut="Ctrl+T, Ctrl+T" name="new-tab"/>
-  <Action shortcut="Ctrl+W, Ctrl+W" name="new-window"/>
-  <Action shortcut="Ctrl+T, Ctrl+Right; Ctrl+PgDown" name="next-tab"/>
-  <Action shortcut="" name="open_kcommand_bar"/>
-  <Action shortcut="" name="options_configure"/>
-  <Action shortcut="" name="options_configure_keybinding"/>
-  <Action shortcut="" name="options_show_menubar"/>
-  <Action shortcut="Ctrl+T, Ctrl+Left; Ctrl+PgUp" name="previous-tab"/>
-  <Action shortcut="" name="semantic-setup-bash"/>
-  <Action shortcut="Ctrl+P, Ctrl+-" name="shrink-active-view"/>
-  <Action shortcut="Ctrl+P, Ctrl+'" name="split-view-auto"/>
-  <Action shortcut="Ctrl+P, Ctrl+/" name="split-view-left-right"/>
-  <Action shortcut="Ctrl+P, Ctrl+\" name="split-view-top-bottom"/>
-  <Action shortcut="" name="switch-to-tab-0"/>
-  <Action shortcut="" name="switch-to-tab-1"/>
-  <Action shortcut="" name="switch-to-tab-2"/>
-  <Action shortcut="" name="switch-to-tab-3"/>
-  <Action shortcut="" name="switch-to-tab-4"/>
-  <Action shortcut="" name="switch-to-tab-5"/>
-  <Action shortcut="" name="switch-to-tab-6"/>
-  <Action shortcut="" name="switch-to-tab-7"/>
-  <Action shortcut="" name="switch-to-tab-8"/>
-  <Action shortcut="" name="switch-to-tab-9"/>
-  <Action shortcut="" name="toggle-line-numbers"/>
-  <Action shortcut="" name="toggle-maximize-current-view"/>
-  <Action shortcut="" name="toggle-semantic-hints"/>
+  <Action name="activate-menu" shortcut=""/>
+  <Action name="add_bookmark" shortcut=""/>
+  <Action name="clone-tab" shortcut="Ctrl+T, Ctrl+C"/>
+  <Action name="close-window" shortcut="Ctrl+W, Ctrl+X"/>
+  <Action name="detach-tab" shortcut="Ctrl+T, Ctrl+D"/>
+  <Action name="detach-view" shortcut="Ctrl+P, Ctrl+D"/>
+  <Action name="equal-size-view" shortcut="Ctrl+P, Ctrl+0"/>
+  <Action name="expand-active-view" shortcut="Ctrl+P, Ctrl+="/>
+  <Action name="focus-view-above" shortcut=""/>
+  <Action name="focus-view-below" shortcut=""/>
+  <Action name="focus-view-left" shortcut=""/>
+  <Action name="focus-view-right" shortcut=""/>
+  <Action name="last-tab" shortcut="Ctrl+T, Ctrl+Tab"/>
+  <Action name="last-used-tab" shortcut=""/>
+  <Action name="last-used-tab-reverse" shortcut=""/>
+  <Action name="move-tab-to-left" shortcut="Ctrl+T, Ctrl+Shift+Left"/>
+  <Action name="move-tab-to-right" shortcut="Ctrl+T, Ctrl+Shift+Right"/>
+  <Action name="new-tab" shortcut="Ctrl+T, Ctrl+T"/>
+  <Action name="new-window" shortcut="Ctrl+W, Ctrl+W"/>
+  <Action name="next-tab" shortcut="Ctrl+T, Ctrl+Right; Ctrl+PgDown"/>
+  <Action name="open_kcommand_bar" shortcut=""/>
+  <Action name="options_configure" shortcut=""/>
+  <Action name="options_configure_keybinding" shortcut=""/>
+  <Action name="options_show_menubar" shortcut=""/>
+  <Action name="previous-tab" shortcut="Ctrl+T, Ctrl+Left; Ctrl+PgUp"/>
+  <Action name="semantic-setup-bash" shortcut=""/>
+  <Action name="shrink-active-view" shortcut="Ctrl+P, Ctrl+-"/>
+  <Action name="split-view-auto" shortcut="Ctrl+P, Ctrl+'"/>
+  <Action name="split-view-left-right" shortcut="Ctrl+P, Ctrl+/"/>
+  <Action name="split-view-top-bottom" shortcut="Ctrl+P, Ctrl+\"/>
+  <Action name="switch-to-tab-0" shortcut=""/>
+  <Action name="switch-to-tab-1" shortcut=""/>
+  <Action name="switch-to-tab-2" shortcut=""/>
+  <Action name="switch-to-tab-3" shortcut=""/>
+  <Action name="switch-to-tab-4" shortcut=""/>
+  <Action name="switch-to-tab-5" shortcut=""/>
+  <Action name="switch-to-tab-6" shortcut=""/>
+  <Action name="switch-to-tab-7" shortcut=""/>
+  <Action name="switch-to-tab-8" shortcut=""/>
+  <Action name="switch-to-tab-9" shortcut=""/>
+  <Action name="toggle-line-numbers" shortcut=""/>
+  <Action name="toggle-maximize-current-view" shortcut=""/>
+  <Action name="toggle-semantic-hints" shortcut=""/>
+  <Action name="help_contents" shortcut=""/>
  </ActionProperties>
 </gui>
