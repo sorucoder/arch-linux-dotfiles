@@ -8,7 +8,6 @@ sudo_alias -b chown='chown -R'
 sudo_alias -b chmod='chmod -R'
 sudo_alias -b chgrp='chgrp -R'
 sudo_alias -b chown='chown -R'
-alias configure-sudoers='sudo visudo'
 
 #
 # File Information and Management
@@ -27,7 +26,8 @@ sudo_alias -b sln='ln -s'
 # Programs
 #
 
-sudo_alias -b edit="$EDITOR"
+alias edit="$EDITOR"
+alias suedit='sudoedit'
 alias pkgmgr='paru'
 sudo_alias pacman
 sudo_alias ufw
@@ -53,14 +53,16 @@ if [[ -e $HEREROCKS ]]; then
 fi
 
 #
-# Program Configuration
+# Configuration Aliases
 #
 
 configuration_alias hosts /etc/hosts
 configuration_alias ssh-daemon /etc/ssh/sshd_config 'sudo systemctl reload sshd' 'Reloading SSH Daemon configuration...'
 configuration_alias ssh-client ~/.ssh/config
-configuration_alias nano ~/.nanorc
+configuration_alias nano-user ~/.nano/user.nanorc
+configuration_alias nano-root ~/.nano/root.nanorc
 configuration_alias git ~/.gitconfig
+alias configure-sudoers='sudo visudo'
 
 # Apache
 if systemctl is-active --quiet httpd; then
