@@ -3,8 +3,6 @@
 	name  = sorucoder
 [safe]
 	directory = /opt/
-[core]
-	editor = nano
 [protocol "file"]
 	allow = always
 [push]
