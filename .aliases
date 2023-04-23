@@ -7,7 +7,6 @@
 sudo_alias -b chown='chown -R'
 sudo_alias -b chmod='chmod -R'
 sudo_alias -b chgrp='chgrp -R'
-sudo_alias -b chown='chown -R'
 
 #
 # File Information and Management
@@ -21,6 +20,13 @@ sudo_alias -b mkdir='mkdir -p'
 sudo_alias -b rmdir='rm -r'
 sudo_alias -b touch='touch'
 sudo_alias -b sln='ln -s'
+
+#
+# Device Management
+#
+
+sudo_alias mount='mount -m'
+sudo_alias umount 
 
 #
 # Programs
