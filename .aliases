@@ -14,10 +14,11 @@ sudo_alias -b chgrp='chgrp -R'
 
 alias ls='ls --color=auto'
 sudo_alias -b cp
+sudo_alias -b cpdir='cp -r'
 sudo_alias -b mv
 sudo_alias -b rm
-sudo_alias -b mkdir='mkdir -p'
 sudo_alias -b rmdir='rm -r'
+sudo_alias -b mkdir='mkdir -p'
 sudo_alias -b touch='touch'
 sudo_alias -b sln='ln -s'
 
