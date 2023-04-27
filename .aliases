@@ -71,6 +71,7 @@ configuration_alias nano-user ~/.nano/user.nanorc
 configuration_alias nano-root ~/.nano/root.nanorc
 configuration_alias git ~/.gitconfig
 configuration_alias pacman /etc/pacman.conf
+configuration_alias grub /etc/default/grub "sudo grub-install --target=$(uname -m)-efi --efi-directory=/boot --bootloader-id=GRUB; sudo grub-mkconfig -o /boot/grub/grub.cfg" 'Reinstalling and reconfiguring GRUB...'
 
 # Apache
 if systemctl is-active --quiet httpd; then
