@@ -62,13 +62,14 @@ fi
 # Configuration Aliases
 #
 
+alias configure-sudoers='sudo visudo'
 configuration_alias hosts /etc/hosts
 configuration_alias ssh-daemon /etc/ssh/sshd_config 'sudo systemctl reload sshd' 'Reloading SSH Daemon configuration...'
 configuration_alias ssh-client ~/.ssh/config
 configuration_alias nano-user ~/.nano/user.nanorc
 configuration_alias nano-root ~/.nano/root.nanorc
 configuration_alias git ~/.gitconfig
-alias configure-sudoers='sudo visudo'
+configuration_alias pacman /etc/pacman.conf
 
 # Apache
 if systemctl is-active --quiet httpd; then
