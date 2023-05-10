@@ -4,7 +4,7 @@
 # Dotfiles Bootstrapping
 #
 
-cd ~/.dotfiles
+cd $HOME/.dotfiles
 
 if [[ $(nmcli --colors no networking connectivity) == 'full' ]]; then
 	git pull --quiet origin master
@@ -27,6 +27,7 @@ for dotfile in $(find . -type f -not -path './.git/*' -not -path './install/*' -
 		ln -s $dotfile_target $dotfile_link
 	fi
 done
+unset dotfile dotfile_target dotfile_link
 
 cd "$OLDPWD"
 
@@ -89,22 +90,22 @@ function sudo_alias() {
 	if [[ "$1" == '-b' || "$1" == '--both' ]]; then
 		shift
 		if [[ ! "$1" =~ '=' ]]; then
-			command="$1"
+			declare command="$1"
 			alias $command="$command"
 			alias su$command="sudo $command"
 		else
-			program=$(cut -d '=' -f 1 <<< $1)
-			command=$(cut -d '=' -f 2 <<< $1)
+			declare program=$(cut -d '=' -f 1 <<< $1)
+			declare command=$(cut -d '=' -f 2 <<< $1)
 			alias $program="$command"
 			alias su$program="sudo $command"
 		fi
 	else
 		if [[ ! "$1" =~ '=' ]]; then
-			command="$1"
+			declare command="$1"
 			alias $command="sudo $command"
 		else
-			program=$(cut -d '=' -f 1 <<< $1)
-			command=$(cut -d '=' -f 2 <<< $1)
+			declare program=$(cut -d '=' -f 1 <<< $1)
+			declare command=$(cut -d '=' -f 2 <<< $1)
 			alias $program="sudo $command"
 		fi
 	fi
@@ -131,11 +132,11 @@ function configuration_alias() {
 		echo
 		echo -e "If RELOAD is given, a message will be echoed and RELOAD will be executed. For example:"
 		echo
-		echo -e "\tconfiguration_alias bash ~/.bashrc 'source ~/.bashrc'"
+		echo -e "\tconfiguration_alias bash $HOME/.bashrc 'source $HOME/.bashrc'"
 		echo
 		echo -e "will generate:"
 		echo
-		echo -e "\talias configure-bash=\"edit ~./bashrc; echo -e 'Reloading Bash configuration...'; source ~/.bashrc\""
+		echo -e "\talias configure-bash=\"edit ~./bashrc; echo -e 'Reloading Bash configuration...'; source $HOME/.bashrc\""
 		echo
 		echo -e "If MESSAGE is given, MESSAGE will be echoed instead."
 
@@ -146,28 +147,28 @@ function configuration_alias() {
 		fi
     fi
 
-    program=$1; shift
-    file=$1; shift
+    declare program=$1; shift
+    declare file=$1; shift
 
     # If file exists, check to see if sudo would be required.
 	# Otherwise, warn the user and assume sudo is not needed.
     if [[ ! -e $file ]]; then
         echo_warn "warning: '$file' does not exist; configuration_alias will assume non-root editing"
-        editor=$EDITOR
+        declare editor=$EDITOR
     elif ! touch -c $file 2>&1 | grep -q 'Permission denied'; then
-        editor=$EDITOR
+        declare editor=$EDITOR
     else
-        editor="sudo $SUDO_EDITOR"
+        declare editor=$SUDO_EDITOR
     fi
 
     if (( $# == 0 )); then
         alias configure-$program="$editor $file"
     elif (( $# == 1 )); then
-        reload=$1
+        declare reload=$1
         alias configure-$program="$editor $file; echo 'Reloading $program...'; $reload"
     else
-        reload=$1; shift
-        message=$1
+        declare reload=$1; shift
+        declare message=$1
         alias configure-$program="$editor $file; echo $message; $reload"
     fi
 }
@@ -176,16 +177,16 @@ function configuration_alias() {
 # Prompt
 #
 
-PS1='\u@\h:\W\$ '
+export PS1='\u@\h:\W\$ '
 
 #
 # Shell Integrations
 #
 
-source ~/.shell_integrations
+source $HOME/.shell_integrations
 
 #
 # Aliases
 #
 
-source ~/.aliases
+source $HOME/.aliases

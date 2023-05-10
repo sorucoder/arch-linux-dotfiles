@@ -8,4 +8,4 @@
 # Common Configuration
 #
 
-source ~/.bash
+source $HOME/.bash
