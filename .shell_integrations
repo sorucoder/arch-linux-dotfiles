@@ -26,10 +26,12 @@ if which go &> /dev/null; then
 fi
 
 # CEdev integration
-export PATH=$PATH:$HOME/.CEdev/bin
+if [[ -e $HOME/.CEdev ]]; then
+    export PATH=$PATH:$HOME/.CEdev/bin
+fi
 
 # .NET Tools integration
-if [[ -e ~/.dotnet/tools ]]; then
+if [[ -e $HOME/.dotnet/tools ]]; then
 	export PATH=$PATH:$HOME/.dotnet/tools
 fi
 
@@ -44,12 +46,20 @@ if [[ -e /opt/mssql-tools ]]; then
 fi
 
 # Hererocks integration
-export HEREROCKS=$HOME/.hererocks
+if [[ -e $HOME/.hererocks ]]; then
+    export HEREROCKS=$HOME/.hererocks
+fi
 
 # Node Version Manager integration
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [[ -e $HOME/.nvm ]]; then
+    export NVM_DIR="$HOME/.nvm"
+    if [[ -s $NVM_DIR/nvm.sh ]]; then 
+        source $NVM_DIR/nvm.sh
+    fi
+    if [[ -s $NVM_DIR/bash_completion ]]; then
+        source $NVM_DIR/bash_completion
+    fi
+fi
 
 # AngularJS integration
 if which ng &> /dev/null; then
@@ -57,4 +67,6 @@ if which ng &> /dev/null; then
 fi
 
 # Wine integration
-export WINEDLLOVERRIDES=winemenubuilder.exe=d
+if which wine &> /dev/null; then
+    export WINEDLLOVERRIDES=winemenubuilder.exe=d
+fi
