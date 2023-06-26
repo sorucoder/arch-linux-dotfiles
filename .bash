@@ -1,35 +1,46 @@
-#!/usr/bin/env
+#!/usr/bin/env bash
 
 #
 # Dotfiles Bootstrapping
 #
 
-cd $HOME/.dotfiles
+function bootstrap_dotfiles() {
+	local dotfile target link link_dirname
 
-if [[ $(nmcli --colors no networking connectivity) == 'full' ]]; then
-	git pull --quiet origin master
-else
-	echo -e '\e[93m\e[1mwarning: not connected to the internet; not updating dotfiles\e[0m'
-fi
-
-for dotfile in $(find . -type f -not -path './.git/*' -not -path './install/*' -printf '%P\n'); do
-    dotfile_target="$HOME/.dotfiles/$dotfile"
-    dotfile_link="$HOME/$dotfile"
-	if [[ ! -h $dotfile_link ]]; then
-		dotfile_target_directory=$(dirname $dotfile_target)
-		if [[ ! -d $dotfile_target_directory ]]; then
-			mkdir -p $dotfile_target_directory
-		fi
-
-        if [[ -e $dotfile_target ]]; then
-            rm $dotfile_target
-        fi
-		ln -s $dotfile_target $dotfile_link
+	cd $HOME/.dotfiles
+	if [[ $(nmcli --colors no networking connectivity) == 'full' ]]; then
+		git pull --quiet origin master
+	else
+		printf "\e[93m\e[1mwarning: not connected to the internet; not updating dotfiles\e[0m"
+		cd "$OLDPWD"
+		return 1
 	fi
-done
-unset dotfile dotfile_target dotfile_link
 
-cd "$OLDPWD"
+	for dotfile in $(find . -type f -not -path "/.git/*" -not -path "./install/*" -printf "%P\n"); do
+		target="$HOME/.dotfiles/$dotfile"
+		link="$HOME/$dotfile"
+		if [[ ! -h $link ]]; then
+			link_dirname=$(dirname $link)
+			if [[ ! -d $link_dirname ]]; then
+				if [[ -e $link ]]; then
+					rm $link_dirname
+				fi
+				mkdir -p $link_dirname
+			fi
+
+			if [[ -e $link ]]; then
+				rm $link
+			fi
+			ln -s $target $link
+		fi
+	done
+
+	cd "$OLDPWD"
+
+	return 0
+}
+
+bootstrap_dotfiles
 
 #
 # Shell Options
@@ -49,36 +60,35 @@ export SUDO_EDITOR="nano --restricted --rcfile $HOME/.nano/root.nanorc"
 # Shell Functions
 #
 
-function echo_warn() {
-	echo -e "\e[93m\e[1m$@\e[0m"
+function print_warning() {
+	printf "\e[93m\e[1mwarning: $@\e[0m\n"
 }
 
-function echo_advise() {
-    echo -e "\e[3m$@\e[0m"
+function print_advisory() {
+    printf "\e[3m$@\e[0m\n"
 }
 
 function sudo_alias() {
 	if (( $# == 0 )); then
-		echo -e "Usage: sudo_alias [-b|--both] PROGRAM=COMMAND"
-		echo
-		echo -e "Generates alias(es) which require(s) sudo."
-		echo
-		echo -e "When --both is given, this function will generate one alias with PROGRAM in tact and COMMAND in tact,"
-		echo -e "and another alias with PROGRAM prepended with 'su' and COMMAND prepended with 'sudo '. For example:"
-		echo
-		echo -e "\tsudo_alias -b cp='cp -r'"
-		echo
-		echo -e "will generate"
-		echo
-		echo -e "\talias cp='cp -r'"
-		echo
-		echo -e "and"
-		echo
-		echo -e "\talias sucp='sudo cp -r'"
-		echo
-		echo -e "Otherwise, this function will generate the alias with PROGRAM in tact and COMMAND prepended with 'sudo '."
+		printf "Usage: sudo_alias [-b|--both] PROGRAM=COMMAND\n\n"
 
-		# Either return if interactive or exit in shell
+		printf "Generates alias(es) which require(s) sudo.\n\n"
+
+		printf "When --both is given, this function will generate one alias with PROGRAM in tact and COMMAND in tact,\n"
+		printf "and another alias with PROGRAM prepended with \"su\" and COMMAND prepended with \"sudo \". For example:\n\n"
+
+		printf "\tsudo_alias -b cp=\"cp -r\"\n\n"
+
+		printf "will generate:\n\n"
+
+		printf "\talias cp=\"cp -r\"\n\n"
+
+		printf "and\n\n"
+
+		printf "\talias sucp=\"sudo cp -r\"\n\n"
+
+		printf "Otherwise, this function will generate the alias with PROGRAM in tact and COMMAND prepended with \"sudo \".\n"
+
 		if [[ $- == *i* ]]; then
 			return 1
 		else
@@ -86,59 +96,64 @@ function sudo_alias() {
 		fi
 	fi
 
+	local both command program
 
-	if [[ "$1" == '-b' || "$1" == '--both' ]]; then
+	both=false
+	if [[ $1 == "-b" || $1 == "--both" ]]; then
+		both=true
 		shift
-		if [[ ! "$1" =~ '=' ]]; then
-			declare command="$1"
-			alias $command="$command"
-			alias su$command="sudo $command"
-		else
-			declare program=$(cut -d '=' -f 1 <<< $1)
-			declare command=$(cut -d '=' -f 2 <<< $1)
-			alias $program="$command"
-			alias su$program="sudo $command"
-		fi
+	fi
+
+	command=$1
+	if [[ $command =~ "=" ]]; then
+		program=$(cut -d "=" -f 1 <<< $command)
+		command=$(cut -d "=" -f 2- <<< $command)
 	else
-		if [[ ! "$1" =~ '=' ]]; then
-			declare command="$1"
-			alias $command="sudo $command"
-		else
-			declare program=$(cut -d '=' -f 1 <<< $1)
-			declare command=$(cut -d '=' -f 2 <<< $1)
-			alias $program="sudo $command"
-		fi
+		program=$command
+	fi
+
+	if $both; then
+		alias $program="$command"
+		alias su$program="sudo $command"
+	else
+		alias $program="sudo $command"
+	fi
+
+	if [[ $- == *i* ]]; then
+		return 0
+	else
+		exit 0
 	fi
 }
 
 function configuration_alias() {
     if (( $# < 2 )); then
-        echo -e "Usage: configuration_alias PROGRAM FILE [RELOAD [MESSAGE]]"
-		echo
-		echo -e "Creates an alias that invokes the configured editor for the purpose of configuration, and (optionally)"
-		echo -e "reload the program to which the configuration adheres to."
-		echo
-		echo -e "The name of the generated alias will be 'configure-PROGRAM'. If FILE already exists, the generated alias"
-		echo -e "will determine if 'sudo \$EDITOR FILE' is required. Otherwise, it will assume that '\$EDITOR FILE' is"
-		echo -e "sufficient."
-		echo
-		echo -e "By default, this function will generate an alias that will simply edit the configuration file. For example:"
-		echo
-		echo -e "\tconfiguration_alias hosts /etc/hosts"
-		echo
-		echo -e "will generate:"
-		echo
-		echo -e "\talias configure-hosts=\"sudo \$EDITOR /etc/hosts\""
-		echo
-		echo -e "If RELOAD is given, a message will be echoed and RELOAD will be executed. For example:"
-		echo
-		echo -e "\tconfiguration_alias bash $HOME/.bashrc 'source $HOME/.bashrc'"
-		echo
-		echo -e "will generate:"
-		echo
-		echo -e "\talias configure-bash=\"edit ~./bashrc; echo -e 'Reloading Bash configuration...'; source $HOME/.bashrc\""
-		echo
-		echo -e "If MESSAGE is given, MESSAGE will be echoed instead."
+        printf "Usage: configuration_alias PROGRAM FILE [RELOAD_COMMAND [RELOAD_MESSAGE]]\n\n"
+
+		printf "Creates an alias that invokes the configured editor for the purposes of configuration, and (optionally)\n"
+		printf "reload the program/service to which the configuration controls.\n\n"
+
+		printf "The name of the generated alias will be \"configure-PROGRAM\". If FILE already exists, the generated alias\n"
+		printf "will determine if \"\$SUDO_EDITOR FILE\" is required. Otherwise, it will assume that \"\$EDITOR FILE\" is\n"
+		printf "sufficient.\n\n"
+
+		printf "By default, this function will generate an alias that will simply edit the configuration file. For example:\n\n"
+
+		printf "\tconfiguration_alias hosts /etc/hosts\n\n"
+
+		printf "will generate:\n\n"
+
+		printf "\talias configure-hosts=\"sudo \$EDITOR /etc/hosts\"\n\n"
+
+		printf "If RELOAD_COMMAND is given, a generic message will be echoed and RELOAD_COMMAND will be executed. For example:\n\n"
+
+		printf "\tconfiguration_alias bash $HOME/.bashrc \"source $HOME/.bashrc\"\n\n"
+
+		printf "will generate:\n\n"
+
+		printf "\talias configure-bash=\"edit ~./bashrc; printf \"Reloading bash...\\n\"; source $HOME/.bashrc\"\n\n"
+
+		printf "If RELOAD_MESSAGE is given, RELOAD_MESSAGE with a newline will be printed instead.\n"
 
 		if [[ $- == *i* ]]; then
 			return 1
@@ -147,37 +162,40 @@ function configuration_alias() {
 		fi
     fi
 
-    declare program=$1; shift
-    declare file=$1; shift
+    local program file reload_command reload_message editor
 
-    # If file exists, check to see if sudo would be required.
-	# Otherwise, warn the user and assume sudo is not needed.
-    if [[ ! -e $file ]]; then
-        echo_warn "warning: '$file' does not exist; configuration_alias will assume non-root editing"
-        declare editor=$EDITOR
-    elif ! touch -c $file 2>&1 | grep -q 'Permission denied'; then
-        declare editor=$EDITOR
-    else
-        declare editor=$SUDO_EDITOR
-    fi
+    program=$1; shift
+    file=$1; shift
+    reload_command=$1; shift
+    reload_message=$1
 
-    if (( $# == 0 )); then
-        alias configure-$program="$editor $file"
-    elif (( $# == 1 )); then
-        declare reload=$1
-        alias configure-$program="$editor $file; echo 'Reloading $program...'; $reload"
-    else
-        declare reload=$1; shift
-        declare message=$1
-        alias configure-$program="$editor $file; echo $message; $reload"
-    fi
+    editor=$EDITOR
+    if touch -c $file 2>&1 | grep -q "Permission denied"; then
+    	editor=$SUDO_EDITOR
+    elif [[ ! -e $file ]]; then
+    	print_warning "\"$file\" does not exist; configuration_alias will assume unpriviledged editing"
+	fi
+
+	if [[ -z $reload_command ]]; then
+		alias configure-$program="$editor $file"
+	elif [[ -z $reload_message ]]; then
+		alias configure-$program="$editor $file; printf \"Reloading $program...\n\"; $reload_command"
+	else
+		alias configure-$program="$editor $file; printf \"$reload_message\n\"; $reload_command"
+	fi
+
+	if [[ $- == *i* ]]; then
+		return 0
+	else
+		exit 0
+	fi
 }
 
 #
 # Prompt
 #
 
-export PS1='\u@\h:\W\$ '
+export PS1="\u@\h:\W\$ "
 
 #
 # Shell Integrations

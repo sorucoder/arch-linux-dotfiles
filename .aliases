@@ -4,29 +4,29 @@
 # Permission and User Management
 #
 
-sudo_alias -b chown='chown -R'
-sudo_alias -b chmod='chmod -R'
-sudo_alias -b chgrp='chgrp -R'
+sudo_alias -b chown="chown -R"
+sudo_alias -b chmod="chmod -R"
+sudo_alias -b chgrp="chgrp -R"
 
 #
 # File Information and Management
 #
 
-alias ls='ls --color=auto'
+alias ls="ls --color=auto"
 sudo_alias -b cp
-sudo_alias -b cpdir='cp -r'
+sudo_alias -b cpdir="cp -r"
 sudo_alias -b mv
 sudo_alias -b rm
-sudo_alias -b rmdir='rm -r'
-sudo_alias -b mkdir='mkdir -p'
+sudo_alias -b rmdir="rm -r"
+sudo_alias -b mkdir="mkdir -p"
 sudo_alias -b touch
-sudo_alias -b sln='ln -s'
+sudo_alias -b sln="ln -s"
 
 #
 # Device Management
 #
 
-sudo_alias mount='mount -m'
+sudo_alias mount="mount -m"
 sudo_alias umount 
 
 #
@@ -34,11 +34,11 @@ sudo_alias umount
 #
 
 alias edit="$EDITOR"
-alias suedit='sudoedit'
-alias pkgmgr='paru'
+alias suedit="sudoedit"
+alias pkgmgr="paru"
 sudo_alias pacman
 sudo_alias ufw
-sudo_alias sysctl='systemctl'
+sudo_alias sysctl="systemctl"
 sudo_alias reboot
 
 #
@@ -63,21 +63,21 @@ fi
 # Configuration Aliases
 #
 
-alias configure-sudoers='sudo visudo'
+alias configure-sudoers="sudo visudo"
 configuration_alias hosts /etc/hosts
 configuration_alias pacman /etc/pacman.conf
 
 # GRUB
 if which grub-install &> /dev/null && which grub-mkconfig &> /dev/null; then
-    sudo_alias grub-install="grub-install --target=$(uname -m)-efi --efi-directory=/boot --bootloader-id=GRUB"
-    sudo_alias grub-mkconfig="grub-mkconfig -o /boot/grub/grub.cfg"
-    configuration_alias grub /etc/default/grub "sudo grub-install --target=$(uname -m)-efi --efi-directory=/boot --bootloader-id=GRUB; sudo grub-mkconfig -o /boot/grub/grub.cfg" 'Reinstalling and reconfiguring GRUB...'
+	sudo_alias grub-install="/usr/bin/grub-install --target=$arch-efi --efi-directory=/boot --bootloader-id=GRUB"
+    sudo_alias grub-mkconfig="/usr/bin/grub-mkconfig -o /boot/grub/grub.cfg"
+    configuration_alias grub /etc/default/grub "sudo grub-install --target="$(uname -m)-efi" --efi-directory=/boot --bootloader-id=GRUB; sudo grub-mkconfig -o /boot/grub/grub.cfg" "Reinstalling and reconfiguring GRUB..."
 fi
 
 # SSH
 
-if systemctl is-active --quiet sshd; then
-    configuration_alias ssh-daemon /etc/ssh/sshd_config 'sudo systemctl reload sshd' 'Reloading SSH Daemon configuration...'
+if which sshd &> /dev/null; then
+    configuration_alias ssh-daemon /etc/ssh/sshd_config "sudo systemctl reload sshd" "Reloading SSH Daemon configuration..."
     configuration_alias ssh-client $HOME/.ssh/config
 fi
 
@@ -86,7 +86,7 @@ fi
 if which nano &> /dev/null; then
     configuration_alias nano-user $HOME/.nano/user.nanorc
     configuration_alias nano-root $HOME/.nano/root.nanorc
-    alias configure-nano='configure-nano-user'
+    alias configure-nano="configure-nano-user"
 fi
 
 # Git
@@ -97,26 +97,29 @@ fi
 
 # Apache
 
-if systemctl is-active --quiet httpd; then
-	configuration_alias apache /etc/httpd/conf/httpd.conf 'sudo systemctl reload httpd' 'Reloading Apache...'
-	configuration_alias php /etc/php/php.ini 'sudo systemctl reload httpd' 'Reloading Apache...'
+if which httpd &> /dev/null; then
+	configuration_alias apache /etc/httpd/conf/httpd.conf "sudo systemctl reload httpd" "Reloading Apache..."
+	configuration_alias php /etc/php/php.ini "sudo systemctl reload httpd" "Reloading Apache..."
 fi
 
 #
 # Bash Configurations
 #
+function bash_configuration_aliases () {
+	local reload
+	if ! shopt -q login_shell; then
+		reload="source $HOME/.bashrc"
+		configuration_alias interactive-shell $HOME/.bashrc "$reload" "Reloading shell..."
+		configuration_alias login-shell $HOME/.profile
+	else
+		reload="source $HOME/.profile"
+		configuration_alias interactive-shell $HOME/.bashrc
+		configuration_alias login-shell $HOME/.profile "$reload" "Reloading shell..."
+	fi
+	alias reload="$reload"
+	configuration_alias bash $HOME/.bash "$reload" "Reloading shell..."
+	configuration_alias aliases $HOME/.aliases "$reload" "Reloading shell..."
+	configuration_alias shell-integrations $HOME/.shell_integrations "$reload" "Reloading shell..."
+}
 
-if ! shopt -q login_shell; then
-    reload="source $HOME/.bashrc"
-    configuration_alias interactive-shell $HOME/.bashrc "$reload" 'Reloading shell...'
-    configuration_alias login-shell $HOME/.profile
-else
-    reload="source $HOME/.profile"
-    configuration_alias interactive-shell $HOME/.bashrc
-    configuration_alias login-shell $HOME/.profile "$reload" 'Reloading shell...'
-fi
-alias reload="$reload"
-configuration_alias bash $HOME/.bash "$reload" 'Reloading shell...'
-configuration_alias aliases $HOME/.aliases "$reload" 'Reloading shell...'
-configuration_alias shell-integrations $HOME/.shell_integrations "$reload" 'Reloading shell...'
-unset reload
+bash_configuration_aliases
