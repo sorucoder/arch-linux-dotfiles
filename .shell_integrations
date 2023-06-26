@@ -72,7 +72,12 @@ if which wine &> /dev/null; then
 fi
 
 # Rust integration
-if [[ -x $HOME/.cargo/bin/rustc ]]; then
+if [[ -d $HOME/.cargo ]]; then
 	export PATH="$PATH:$HOME/.cargo/bin"
 	source $HOME/.cargo/env
+fi
+
+# TIC-80 integration
+if which tic80 &> /dev/null; then
+	export TIC80_START_PATH=$HOME/Programming/TIC-80
 fi
