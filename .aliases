@@ -105,7 +105,7 @@ fi
 #
 # Bash Configurations
 #
-function bash_configuration_aliases () {
+function bash_configuration_aliases() {
 	local reload
 	if ! shopt -q login_shell; then
 		reload="source $HOME/.bashrc"
