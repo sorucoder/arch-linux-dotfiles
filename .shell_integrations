@@ -26,8 +26,8 @@ if which go &> /dev/null; then
 fi
 
 # CEdev integration
-if [[ -e $HOME/.CEdev ]]; then
-    export PATH=$PATH:$HOME/.CEdev/bin
+if [[ -e /opt/CEdev ]]; then
+	export PATH=$PATH:/opt/CEdev/bin
 fi
 
 # .NET Tools integration
