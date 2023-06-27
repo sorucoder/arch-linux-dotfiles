@@ -44,19 +44,37 @@ sudo_alias reboot
 #
 # Hererocks
 #
+if [[ -n $HEREROCKS ]]; then
+	function hererocks_aliases() {
+		if [[ ! -d $HEREROCKS ]]; then
+			print_warning "cannot find hererocks directory; not adding hererocks aliases"
+			if [[ $- == *i* ]]; then
+				return 1
+			else
+				exit 1
+			fi
+		fi
 
-if [[ -e $HEREROCKS ]]; then
-	lua_installations=($HEREROCKS/lua*)
-	for lua_installation in ${lua_installations[@]}; do
-		version=${lua_installation##$HEREROCKS/lua}
-		alias lua$version="$lua_installation/bin/lua"
-		alias luarocks$version="$lua_installation/bin/luarocks"
-	done
+		local installations installation version
+		installations=($HEREROCKS/lua*)
+		for installation in ${installations[@]}; do
+			version=${installation##$HEREROCKS/lua}
+			alias lua$version="$installation/bin/lua"
+			alias luarocks$version="$installation/bin/luarocks"
+		done
+		alias lua="${installations[-1]}/bin/lua"
+		alias luarocks="${installations[-1]}/bin/luarocks"
+		alias moon="$HEREROCKS/lua5.2/bin/moon"
+		alias moonc="$HEREROCKS/lua5.2/bin/moonc"
 
-	alias lua-latest="${lua_installations[-1]}/bin/lua"
-	alias luarocks-latest="${lua_installations[-1]}/bin/luarocks"
-	alias moon="$HEREROCKS/lua5.2/bin/moon"
-	alias moonc="$HEREROCKS/lua5.2/bin/moonc"
+		if [[ $- == *i* ]]; then
+			return 0
+		else
+			exit 0
+		fi
+	}
+
+	hererocks_aliases
 fi
 
 #
@@ -69,7 +87,7 @@ configuration_alias pacman /etc/pacman.conf
 
 # GRUB
 if which grub-install &> /dev/null && which grub-mkconfig &> /dev/null; then
-	sudo_alias grub-install="/usr/bin/grub-install --target=$arch-efi --efi-directory=/boot --bootloader-id=GRUB"
+	sudo_alias grub-install="/usr/bin/grub-install --target=$(uname -m)-efi --efi-directory=/boot --bootloader-id=GRUB"
     sudo_alias grub-mkconfig="/usr/bin/grub-mkconfig -o /boot/grub/grub.cfg"
     configuration_alias grub /etc/default/grub "sudo grub-install --target="$(uname -m)-efi" --efi-directory=/boot --bootloader-id=GRUB; sudo grub-mkconfig -o /boot/grub/grub.cfg" "Reinstalling and reconfiguring GRUB..."
 fi
