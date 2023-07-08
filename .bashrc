@@ -51,3 +51,13 @@ bootstrap_dotfiles
 #
 
 source $HOME/.bash
+
+#
+# Plasma
+#
+
+if [[ -z $DESKTOP_SESSION ]]; then
+	export DESKTOP_SESSION=plasma
+	dbus-run-session startplasma-wayland
+	logout
+fi
