@@ -5,7 +5,8 @@ declare -a tailscale_addresses tailscale_names
 declare -A applications
 
 function boolean() {
-    if $@; then
+    echo "$@"
+    if "$@"; then
         printf "true\n"
     else
         printf "false\n"
@@ -44,9 +45,9 @@ function install_package() {
 
     if check_application paru; then
 		if ! paru -Qs "^$package\$" &> /dev/null; then
-			printf_if $(boolean test -n $name) "\e[2mInstalling package $name...\e[0m "
+			printf "\e[1mInstalling package $name...\e[0m "
 			paru -S --noconfirm $package &> /dev/null
-            printf_if $(boolean test -n $name) "\e[32mInstalled\e[0m\n"
+            printf "\e[32mInstalled\e[0m\n"
 		fi
         return 0
 	else
@@ -69,32 +70,32 @@ function employ_service() {
     fi
 
     if ! sudo systemctl --quiet is-enabled $service.service; then
-        printf_if $(boolean test -n $name) "\e[2mEnabling service $name...\e[0m "
+        printf "\e[1mEnabling service $name...\e[0m "
         if sudo systemctl enable $service.service &> /dev/null; then
-            printf_if $(boolean test -n $name) "\e[32mEnabled\e[0m\n"
+            printf "\e[32mEnabled\e[0m\n"
 
-            printf "Would you like to start service $name now? \e[2m[Y/n]\e[0m "
+            printf "Would you like to start service $name now? \e[1m[Y/n]\e[0m "
             read -n 1 response
             if [[ -n $response ]]; then
                 if [[ $response != Y || $response != y ]]; then
-                    printf_if $(boolean test -n $response) "\n"
+                    printf "\n"
                     printf "\e[3mMake sure to run this script again to complete installation.\e[0m\n"
                     return 255
                 fi
             fi
         else
-            printf_if $(boolean test -n $name) "\e[31mNot Enabled\e[0m\n"
+            printf "\e[31mNot Enabled\e[0m\n"
             printf "\e[31merror: cannot enable service $name\e[0m\n"
             return 2
         fi
     fi
 
     if ! sudo systemctl is-active $service.service &> /dev/null; then
-        printf_if $(boolean test -n $name) "\e[2mStarting service $name...\e[0m "
+        printf "\e[1mStarting service $name...\e[0m "
         if sudo systemctl start $service.service; then
-            printf_if $(boolean test -n $name) "\e[32mStarted\e[0m\n"
+            printf "\e[32mStarted\e[0m\n"
         else
-            printf_if $(boolean test -n $name) "\e[31mNot Enabled\e[0m\n"
+            printf "\e[31mNot Enabled\e[0m\n"
             printf "\e[31merror: cannot enable service $name\e[0m\n"
             return 3
         fi
@@ -115,7 +116,7 @@ function initialize_tailscale() {
     fi
 
     if [[ -z $tailscale_up ]]; then
-        printf "\e[2mEstablishing connection to Tailscale..."
+        printf "\e[1mEstablishing connection to Tailscale..."
         sudo tailscale up
         if (( $? != 0 )); then
             printf "\e[31merror: cannot establish connection to Tailscale\e[0m\n"
@@ -125,7 +126,7 @@ function initialize_tailscale() {
         fi
         printf "\e[0m\e[32mDone\e[0m\n"
 
-        for host in $(sudo tailscale status | tr -s " " "," | cut -f 1,2); do
+        for host in $(tailscale status | grep -Ev '^(#.*)?$'| tr -s " " "," | cut -f 1,2); do
             tailscale_addresses+=("$(cut -d , -f 1 <<< $host)")
             tailscale_names+=("$(cut -d , -f 2 <<< $host)")
         done
@@ -143,7 +144,7 @@ function update_hosts() {
         return 1
     fi
 
-    printf "\e[2mUpdating /etc/hosts...\e[0m "
+    printf "\e[1mUpdating /etc/hosts...\e[0m "
     printf "# Localhost\n" > /tmp/hosts
     printf "127.0.0.1\tlocalhost\n\n" >> /tmp/hosts
     printf "# Tailscale Hosts\n" >> /tmp/hosts
@@ -175,22 +176,31 @@ function update_ssh() {
     fi
 
     if [[ ! -d $HOME/.ssh ]]; then
-        printf "\e[2mMaking $HOME/.ssh directory...\e[0m "
+        printf "\e[1mMaking $HOME/.ssh directory...\e[0m "
         mkdir -p $HOME/.ssh
         printf "\e[32mDone\e[0m\n"
     fi
 
     if [[ ! -r $HOME/.ssh/$HOSTNAME ]]; then
-        printf "\e[2mGenerating public and private keys...\e[0m "
+        printf "\e[1mGenerating public and private SSH keys...\e[0m "
         ssh-keygen -t ed25519 -C "$USER@$HOSTNAME" -f $HOME/.ssh/$HOSTNAME -N ""
+        eval "$(ssh-agent -s)"
+        ssh-add $HOME/.ssh/$HOSTNAME
         printf "\e[32mDone\e[0m\n"
     fi
 
-    printf "\e[2mGenerating client configuation...\e[0m "
+    if [[ ! -r $HOME/.gnupg/$HOSTNAME.key ]]; then
+        printf "\e[1mGenerating public and private GPG keys...\e[0m "
+        gpg --full-gen-key
+        gpg --output $HOME/.gnupg/$HOSTNAME.key --armor --export sorucoder@proton.me
+        printf "\e[32mDone\e[0m\n"
+    fi
+
+    printf "\e[1mGenerating client configuation...\e[0m "
     printf "# Github\n" > $HOME/.ssh/config
     printf "Host github.com\n" >> $HOME/.ssh/config
-    printf "\tUser git\n" > $HOME/.ssh/config
-    printf "\tIdentityFile %s\n\n" $HOME/.ssh/$HOSTNAME > $HOME/.ssh/config
+    printf "\tUser git\n" >> $HOME/.ssh/config
+    printf "\tIdentityFile %s\n\n" $HOME/.ssh/$HOSTNAME >> $HOME/.ssh/config
     printf "# Tailscale Hosts\n" >> $HOME/.ssh/config
     local index name
     for (( index = 0; index < tailscale_peers; index++ )); do
@@ -204,16 +214,14 @@ function update_ssh() {
     done
     printf "\e[32mDone\e[0m\n"
 
-    printf "\e[2mGenerating daemon configuation...\e[0m "
-    printf "PasswordAuthentication no\n" >> /tmp/sshd_config
-    printf "KbdInteractiveAuthentication no\n" >> /tmp/sshd_config
-    printf "UsePAM yes\n" >> /tmp/sshd_config
-    printf "PrintMotd no\n" >> /tmp/sshd_config
-    printf "Subsystem sftp /usr/lib/ssh/sftp-server\n" >> /tmp/sshd_config
-    sudo cp /tmp/sshd_config /etc/ssh/sshd_config
+    printf "\e[1mCopying daemon configuation...\e[0m "
+    if [[ -e /etc/ssh/sshd_config ]]; then
+        sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+    fi
+    sudo cp $HOME/.dotfiles/install/networking/sshd_config /etc/ssh/sshd_config
     printf "\e[32mDone\e[0m\n"
 
-    printf "\e[2mRestarting daemon...\e[0m "
+    printf "\e[1mRestarting daemon...\e[0m "
     if ! sudo systemctl restart sshd; then
         printf "\e[31mFailed\e[0m\n"
         return 2
@@ -231,6 +239,4 @@ update_hosts && \
 install_package openssh "Secure Shell" && \
 employ_service sshd "Secure Shell" && \
 update_ssh
-if (( $? != 0 )); then
-    quit $?
-fi
+quit $?
