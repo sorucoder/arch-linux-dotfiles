@@ -4,22 +4,6 @@ declare tailscale_up tailscale_peers
 declare -a tailscale_addresses tailscale_names
 declare -A applications
 
-function boolean() {
-    echo "$@"
-    if "$@"; then
-        printf "true\n"
-    else
-        printf "false\n"
-    fi
-}
-
-function printf_if() {
-    local enable=$1; shift
-    if $enable; then
-        printf "$@"
-    fi
-}
-
 function check_application() {
     local application=$1
 
@@ -51,7 +35,7 @@ function install_package() {
 		fi
         return 0
 	else
-	    printf "\e[31merror: paru is not available.\e[0m\n"
+	    printf "\e[31merror: paru is not available\e[0m\n"
 		printf "\e[3mGo to https://github.com/Morganamilo/paru for installation instructions.\e[0m\n"
 		return 1
 	fi
@@ -64,7 +48,7 @@ function employ_service() {
     local response
 
     if ! check_application systemctl || ! check_application grep; then
-        printf "\e[31merror: systemctl and/or grep is not available.\e[0m\n"
+        printf "\e[31merror: systemctl and/or grep is not available\e[0m\n"
         printf "\e[3mAre you running this on an Arch Linux system?\e[0m\n"
         return 1
     fi
@@ -110,7 +94,7 @@ function initialize_tailscale() {
 		printf "\e[3mPlease try removing tailscale and try this script again.\e[0m\n"
 		return 1
     elif ! check_application tr || ! check_application cut; then
-        printf "\e[31merror: systemctl, uname and/or grep is not available.\e[0m\n"
+        printf "\e[31merror: systemctl, uname and/or grep is not available\e[0m\n"
         printf "\e[3mAre you running this on an Arch Linux system?\e[0m\n"
         return 1
     fi
@@ -170,7 +154,7 @@ function update_ssh() {
 		printf "\e[3mPlease try removing ssh and try this script again.\e[0m\n"
 		return 1
     elif ! check_application cp || ! check_application mkdir; then
-        printf "\e[31merror: cp and/or mkdir is not available.\e[0m\n"
+        printf "\e[31merror: cp and/or mkdir is not available\e[0m\n"
         printf "\e[3mAre you running this on an Arch Linux system?\e[0m\n"
         return 1
     fi
@@ -230,12 +214,23 @@ function update_ssh() {
 }
 
 install_package networkmanager "NetworkManager" && \
-employ_service NetworkManager "NetworkManager" && \
-install_package plasma-nm "Plasma Network Manager Configuation" && \
+employ_service NetworkManager "NetworkManager"
+if (( $? != 0 )); then
+    quit $?
+fi
+
+if [[ $DESKTOP_SESSION == "plasma" ]]; then
+    install_package plasma-nm "Plasma Network Manager Configuation"
+fi
+
 install_package tailscale "Tailscale" && \
 employ_service tailscaled "Tailscale" && \
 initialize_tailscale && \
-update_hosts && \
+update_hosts
+if (( $? != 0 )); then
+    quit $?
+fi
+
 install_package openssh "Secure Shell" && \
 employ_service sshd "Secure Shell" && \
 update_ssh
