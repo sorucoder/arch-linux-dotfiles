@@ -12,7 +12,7 @@ shopt -s extglob
 
 export EDITOR="nano --rcfile $HOME/.nano/user.nanorc"
 export VISUAL=$EDITOR
-export SUDO_EDITOR="nano --restricted --rcfile $HOME/.nano/root.nanorc"
+export SUDO_EDITOR="sudo nano --restricted --rcfile $HOME/.nano/root.nanorc"
 
 #
 # Shell Functions

@@ -34,7 +34,7 @@ sudo_alias umount
 #
 
 alias edit="$EDITOR"
-alias suedit="sudoedit"
+alias suedit="$SUDO_EDITOR"
 alias pkgmgr="paru"
 sudo_alias pacman
 sudo_alias ufw
