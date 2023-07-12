@@ -2,6 +2,11 @@
 
 declare -A applications
 
+function quit() {
+    unset applications
+    exit $1
+}
+
 function check_application() {
     local application=$1
 
@@ -14,11 +19,6 @@ function check_application() {
     fi
     ${applications[$application]}
     return $?
-}
-
-function quit() {
-    unset applications
-    exit $1
 }
 
 function install_package() {
