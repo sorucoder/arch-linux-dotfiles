@@ -309,6 +309,7 @@ if [[ $DESKTOP_SESSION == plasma ]]; then
     install_package hunspell-en_US "Spell Checking for Firefox" && \
     install_package speech_dispatcher "Text to Speech for Firefox" && \
     install_package xdg-desktop-portal "Screensharing for Firefox" &&
+    install_package xdg-desktop-portal-kde "KDE Integration for Firefox" &&
     install_package firefox-extension-arch-search "Arch Search Extension for Firefox" && \
     install_package plasma-browser-integration "Plasma Integration for Firefox" && \
     install_package bitwarden "Bitwarden"
