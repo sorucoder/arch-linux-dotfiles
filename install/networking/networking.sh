@@ -319,4 +319,6 @@ install_package ufw "Universal Firewall" && \
 employ_service ufw "Univeral Firewall" && \
 initialize_firewall
 
+install_package wget "Web Get"
+
 quit $?
