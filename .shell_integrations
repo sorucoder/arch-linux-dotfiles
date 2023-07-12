@@ -1,5 +1,9 @@
 #/usr/bin/env bash
 
+# Dotfiles integration
+export DOTFILES_SCRIPT=$HOME/.dotfiles/script
+export DOTFILES_INSTALL=$HOME/.dotfiles/install
+
 # Backup and Restore integration
 export BACKUP=$HOME/.backup
 export BACKUP_HOST=sorucoder-server

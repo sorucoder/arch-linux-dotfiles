@@ -141,3 +141,10 @@ function bash_configuration_aliases() {
 }
 
 bash_configuration_aliases
+
+#
+# Scripts
+#
+
+alias backup=$DOTFILES_SCRIPT/backup.sh
+alias restore=$DOTFILES_SCRIPT/restore.sh
