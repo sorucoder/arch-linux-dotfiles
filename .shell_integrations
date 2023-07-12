@@ -1,5 +1,9 @@
 #/usr/bin/env bash
 
+# Backup and Restore integration
+export BACKUP=$HOME/.backup
+export BACKUP_HOST=sorucoder-server
+
 # Powerline integration
 if which powerline-daemon &> /dev/null; then
 	if [[ $TERM == xterm-256color ]]; then
