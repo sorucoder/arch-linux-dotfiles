@@ -1,0 +1,2 @@
+0 0 * * * /home/sorucoder/.cron/backup.sh
+0 4 * * 1 /home/sorucoder/.cron/update.sh
