@@ -62,6 +62,7 @@ function install_dotfile() {
 install_package konsole "Konsole" && \
 install_package powerline "Powerline" && \
 install_package 3270-fonts "IBM 3270 fonts" && \
+install_package ansi2html "ansi2html" && \
 install_dotfile $HOME/.konsole/konsolerc $HOME/.config/konsolerc "Konsole general configuration" && \
 install_dotfile $HOME/.konsole/Oldschool.profile $HOME/.local/share/konsole/Oldschool.profile "Konsole profile" && \
 install_dotfile $HOME/.konsole/Pure.colorscheme $HOME/.local/share/konsole/Pure.colorscheme "Konsole color scheme"
