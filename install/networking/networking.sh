@@ -221,15 +221,35 @@ function update_firewall() {
     fi
     printf "\e[32mDone\e[0m\n"
 
-    printf "\e[1mApplying firewall rules...\e[0m "
+    printf "\e[1mApplying firewall rules...\e[0m\n"
+    if [[ -n $(ls /etc/ufw/{before,after,user}{,6}.rules.*) ]]; then
+        sudo rm /etc/ufw/{before,after,user}{,6}.rules.*
+    fi
+    if ! sudo ufw reset; then
+        printf "\e[31mFailed\e[0m\n"
+        printf "\e[31merror: failed to reset firewall rules\e[0m\n" > /dev/stderr
+        return 3
+    fi
     local rule
     while read -r rule; do
         if ! sudo ufw $rule &> /dev/null; then
             printf "\e[31mFailed\e[0m\n"
             printf "\e[31merror: failed to apply ufw rule \"%s\"\e[0m\n" $rule > /dev/stderr
-            return 3
+            return 4
         fi
     done < $HOME/.dotfiles/install/networking/defaults/ufw/rules
+    local index name address
+    for (( index = 0; index < tailscale_peers; index++ )); do
+        name=${tailscale_names[$index]}
+        address=${tailscale_addresses[$index]}
+        if [[ $name != $HOSTNAME ]]; then
+            if ! sudo ufw allow from $address &> /dev/null; then
+                printf "\e[31mFailed\e[0m\n"
+                printf "\e[31merror: failed to apply rule \"allow from %s\" \(%s\)\e[0m\n" "$address" "$name" > /dev/stderr
+                return 5
+            fi
+        fi
+    done
     printf "\e[32mDone\e[0m\n"
 }
 
@@ -259,6 +279,16 @@ function initialize_firewall() {
         printf "\e[31mFailed\e[0m\n"
         printf "\e[31merror: failed to reload firewall\e[0m\n" > /dev/stderr
     fi
+    printf "\e[32mDone\e[0m\n"
+}
+
+function initialize_email() {
+    printf "\e[1mGenerating mailx configuration...\e[0m "
+    if ! cp $HOME/.dotfiles/install/networking/defaults/.mailrc $HOME/.dotfiles/ &> /dev/null; then
+        printf "\e[31mFailed\e[0m\n"
+        printf "\e[31merror: failed to reload firewall\e[0m\n" > /dev/stderr
+    fi
+    printf "set from=\"$USER@sorucoder.net ($HOSTNAME))\" # Set friendly name here\n" >> $HOME/.dotfiles/.mailrc
     printf "\e[32mDone\e[0m\n"
 }
 
@@ -296,8 +326,16 @@ done
 update_hosts
 
 install_package openssh "Secure Shell" && \
+install_package sshfs "Secure Shell File System" && \
 employ_service sshd "Secure Shell" && \
 initialize_ssh
+if (( $? != 0 )); then
+    quit $?
+fi
+
+install_package mailx "MailX" && \
+install_package protonmail-bridge-bin "Proton Mail Bridge" && \
+initialize_email
 if (( $? != 0 )); then
     quit $?
 fi
@@ -318,7 +356,9 @@ fi
 install_package ufw "Universal Firewall" && \
 employ_service ufw "Univeral Firewall" && \
 initialize_firewall
+if (( $? != 0 )); then
+    quit $?
+fi
 
 install_package wget "Web Get"
-
 quit $?

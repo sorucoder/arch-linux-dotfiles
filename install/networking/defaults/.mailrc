@@ -1,0 +1,6 @@
+set smtp-use-starttls
+set ssl-verify=ignore
+set smtp-auth=login
+set smtp= # smtp://127.0.0.1:1025
+set smtp-auth-user=sorucoder@proton.me
+set smtp-auth-password= # Set password here
