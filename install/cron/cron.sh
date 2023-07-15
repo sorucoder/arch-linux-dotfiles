@@ -81,5 +81,6 @@ function initialize_cronie() {
 }
 
 install_package cronie "Cronie cron" && \
-employ_service cronie "Cronie cron" && \
-initialize_cronie
+install_package moreutils "Chronic, Sponge, etc." && \
+initialize_cronie && \
+employ_service cronie "Cronie cron"
