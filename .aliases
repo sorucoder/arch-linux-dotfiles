@@ -148,3 +148,11 @@ bash_configuration_aliases
 
 alias backup=$DOTFILES_SCRIPT/backup.sh
 alias restore=$DOTFILES_SCRIPT/restore.sh
+
+#
+# Installation Scripts
+#
+
+alias install-networking=$DOTFILES_INSTALL/networking/networking.sh
+alias install-cron=$DOTFILES_INSTALL/cron/cron.sh
+alias install-konsole=$DOTFILES_INSTALL/konsole.sh
