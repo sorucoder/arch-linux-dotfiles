@@ -2,8 +2,6 @@
 
 # Dotfiles integration
 export DOTFILES=$HOME/.dotfiles
-export DOTFILES_SCRIPT=$DOTFILES/script
-export DOTFILES_INSTALL=$DOTFILES/install
 
 # Backup and Restore integration
 export BACKUP=$HOME/.backup

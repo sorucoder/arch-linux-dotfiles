@@ -20,7 +20,8 @@ source $HOME/.bash
 # Desktop Session
 #
 
-if [[ -z $DESKTOP_SESSION ]]; then
+function choose_desktop_session() {
+    local option
 	printf "Please select what you would like to launch:\n"
 	printf "\t1. Arch Linux (default)\n"
 	printf "\t2. Arch Linux with KDE Plasma\n"
@@ -36,8 +37,16 @@ if [[ -z $DESKTOP_SESSION ]]; then
 		2)
             unset option
             export DESKTOP_SESSION=plasma
-            dbus-run-session startplasma-wayland
-            logout
             ;;
 	esac
+}
+
+if [[ -z $DESKTOP_SESSION ]]; then
+    choose_desktop_session
+    if [[ $DESKTOP_SESSION == plasma ]]; then
+        dbus-run-session startplasma-wayland
+        logout
+    fi
 fi
+
+
