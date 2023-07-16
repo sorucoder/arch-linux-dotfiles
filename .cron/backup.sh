@@ -8,6 +8,7 @@ function email_message() {
     printf "</pre>\n"
 }
 
+notify-send --app-name=Backup --icon=preferences-system-backup "Backup" "Beginning backup..."
 if $HOME/.dotfiles/script/backup.sh &> /tmp/backup.log; then
     notify-send --app-name=Backup --icon=preferences-system-backup "Backup" "Daily backup succeeded."
 else

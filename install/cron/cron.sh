@@ -68,19 +68,27 @@ function employ_service() {
             printf "\e[31merror: cannot enable service $name\e[0m\n"
             return 3
         fi
+    else
+        printf "\e[1mReloading or restarting service $name...\e[0m "
+        if sudo systemctl reload-or-restart $service.service &> /dev/null; then
+            printf "\e[32mDone\e[0m\n"
+        else
+            printf "\e[31mNot Enabled\e[0m\n"
+            printf "\e[31merror: cannot enable service $name\e[0m\n"
+            return 4
+        fi
     fi
 }
 
 function initialize_cronie() {
     printf "\e[1mApplying crontab...\e[0m "
-    if ! crontab $HOME/.cron/crontab &> /dev/null; then
+    if ! sudo cp $HOME/.cron/crontab /etc/ &> /dev/null; then
         printf "\e[31mFailed\e[0m\n"
         return 3
     fi
     printf "\e[32mDone\e[0m\n"
 }
 
-install_package cronie "Cronie cron" && \
-install_package moreutils "Chronic, Sponge, etc." && \
+install_package fcron "fcron" && \
 initialize_cronie && \
-employ_service cronie "Cronie cron"
+employ_service fcron "fcron"
