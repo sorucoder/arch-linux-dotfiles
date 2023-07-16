@@ -6,7 +6,7 @@ function bootstrap_dotfiles() {
 	if [[ $(nmcli --colors no networking connectivity) == 'full' ]]; then
 		git pull --quiet origin master
 	else
-		printf "\e[93m\e[1mwarning: not connected to the internet; not updating dotfiles\e[0m"
+		printf "\e[93m\e[1mwarning: not connected to the internet; not updating dotfiles\e[0m\n"
 		cd "$OLDPWD"
 		return 1
 	fi
