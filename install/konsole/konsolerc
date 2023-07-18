@@ -1,0 +1,24 @@
+[Desktop Entry]
+DefaultProfile=Oldschool.profile
+
+[General]
+ConfigVersion=1
+
+[KFileDialog Settings]
+detailViewIconSize=16
+
+[MainWindow]
+1920x1080 screen: Height=422
+1920x1080 screen: Width=842
+1920x1080 screen: XPosition=539
+1920x1080 screen: YPosition=294
+2 screens: Height=422
+2 screens: Width=842
+2 screens: Window-Maximized=true
+HDMI-0=HDMI-0
+RestorePositionForNextInstance=false
+State=AAAA/wAAAAD9AAAAAQAAAAAAAAAAAAAAAPwCAAAAAvsAAAAcAFMAUwBIAE0AYQBuAGEAZwBlAHIARABvAGMAawAAAAAA/////wAAARUBAAAD+wAAACIAUQB1AGkAYwBrAEMAbwBtAG0AYQBuAGQAcwBEAG8AYwBrAAAAAAD/////AAABfAEAAAMAAANKAAABeAAAAAQAAAAEAAAACAAAAAj8AAAAAQAAAAIAAAACAAAAFgBtAGEAaQBuAFQAbwBvAGwAQgBhAHIBAAAAAP////8AAAAAAAAAAAAAABwAcwBlAHMAcwBpAG8AbgBUAG8AbwBsAGIAYQByAQAAAOj/////AAAAAAAAAAA=
+ToolBarsMovable=Disabled
+
+[TabBar]
+TabBarPosition=Top

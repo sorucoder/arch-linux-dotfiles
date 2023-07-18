@@ -39,30 +39,26 @@ function install_package() {
 	fi
 }
 
-function install_dotfile() {
-	local source=$1; shift
-	local destination=$1; shift
-    local name=$1
-
-    if ! check_application rm || ! check_application ln; then
-        printf "\e[31merror: rm and/or ln is not available\e[0m\n"
-        printf "\e[3mAre you running this on an Arch Linux system?\e[0m\n"
+function initialize_konsole() {
+    printf "\e[1mCopying configuration files for Konsole...\e[0m "
+    if ! cp $HOME/.dotfiles/install/konsole/konsolerc $HOME/.config/konsolerc/; then
+        printf "\e[31mFailed\e[0m\n"
         return 1
     fi
-
-	if [[ ! -h $destination ]]; then
-		printf "\e[2mInstalling $name...\e[0m"; fi
-		if [[ -e $destination ]]; then
-            rm $destination;
-        fi
-		ln -s $source $destination
-	fi
+    if ! cp $HOME/.dotfiles/install/konsole/Oldschool.profile $HOME/.local/share/konsole/; then
+        printf "\e[31mFailed\e[0m\n"
+        return 2
+    fi
+    if ! cp $HOME/.dotfiles/install/konsole/Pure.colorscheme $HOME/.local/share/konsole/; then
+        printf "\e[31mFailed\e[0m\n"
+        return 2
+    fi
+    printf "\e[32mDone\e[0m\n"
 }
 
 install_package konsole "Konsole" && \
 install_package powerline "Powerline" && \
 install_package 3270-fonts "IBM 3270 fonts" && \
 install_package ansi2html "ansi2html" && \
-install_dotfile $HOME/.konsole/konsolerc $HOME/.config/konsolerc "Konsole general configuration" && \
-install_dotfile $HOME/.konsole/Oldschool.profile $HOME/.local/share/konsole/Oldschool.profile "Konsole profile" && \
-install_dotfile $HOME/.konsole/Pure.colorscheme $HOME/.local/share/konsole/Pure.colorscheme "Konsole color scheme"
+initialize_konsole
+quit $?
