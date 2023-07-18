@@ -8,8 +8,9 @@ function email_message() {
     printf "</pre>\n"
 }
 
+printf "Beginning update on $(date -Ins)..." >> /var/log/cron/update.log
 notify-send --app-name="System Update" --icon=system-software-update --urgency=CRITICAL "System Update" "Beginning system update..."
-if ! paru --noconfirm &> /var/log/cron/update.log; then
+if ! paru --noconfirm >> /var/log/cron/update.log 2>&1; then
     email_message | mailx -M "text/html" -s "Update Failed" sorucoder@proton.me
 fi
 reboot

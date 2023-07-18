@@ -82,7 +82,7 @@ function employ_service() {
 
 function initialize_cronie() {
     printf "\e[1mApplying crontab...\e[0m "
-    if ! fcrontab $HOME/.cron/crontab /etc/ &> /dev/null; then
+    if ! fcrontab $HOME/.cron/crontab &> /dev/null; then
         printf "\e[31mFailed\e[0m\n"
         return 3
     fi
