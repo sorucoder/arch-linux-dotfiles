@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 
 declare -A applications
-declare option
+declare option logging log_file
 
 function quit() {
-    unset applications option
+    unset applications option logging log_file
     exit $1
+}
+
+function print() {
+    if ! $logging; then
+        printf "$*"
+    else
+        printf "$*" | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" >> $log_file
+    fi
 }
 
 function pretty_print_month() {
@@ -26,6 +34,7 @@ function print_usage() {
     printf "\t-h, --help\t\tPrint this message.\n"
     printf "\t-l, --list\t\tOnly list the files to be backed up today.\n"
     printf "\t-c, --copy [YYYY-MM]\tOnly copy this (or the specified) month's backup to the remote host.\n"
+    printf "\t-o, --output\t\tOutput to a log file.\n"
 }
 
 function check_application() {
@@ -56,7 +65,7 @@ function check_applications() {
 }
 
 function search_files() {
-    printf "\e[1mSearching for all files to backup...\e[0m "
+    print "\e[1mSearching for all files to backup...\e[0m "
     local include_paths
     if [[ -r $BACKUP/include.txt ]]; then
         local include_path
@@ -72,38 +81,38 @@ function search_files() {
     else
         cp /tmp/backup_list.txt $BACKUP/backup_list.txt
     fi
-    printf "\e[32mDone\e[0m\n"
+    print "\e[32mDone\e[0m\n"
 }
 
 function compress_backup_files() {
-    printf "\e[1mCompressing incremental backup archive...\e[0m "
-    if ! tar --create --gzip --directory $HOME --file $BACKUP/$(date +%Y-%m-%d).tar.gz --listed-incremental $BACKUP/$(date +%Y-%m).snar --files-from $BACKUP/backup_list.txt &> /dev/null; then
-        printf "\e[31mFailed\e[0m\n"
+    print "\e[1mCompressing incremental backup archive...\e[0m "
+    if ! tar --create --gzip --directory $HOME --file $BACKUP/$(date +%Y-%m-%d).tar.gz --listed-incremental $BACKUP/$(date +%Y-%m).snar --files-from $BACKUP/backup_list.txt; then
+        print "\e[31mFailed\e[0m\n"
         return 1
     fi
-    printf "\e[32mDone\e[0m\n"
+    print "\e[32mDone\e[0m\n"
 }
 
 function encrypt_backup_files() {
     if ! check_application gpg; then
-        printf "\e[31merror: gpg is not available\e[0m\n" > /dev/stderr
-        printf "\e[3mRun $HOME/.dotfiles/install/networking to ensure GPG is properly configured.\e[0m\n" > /dev/stderr
+        print "\e[31merror: gpg is not available\e[0m\n" > /dev/stderr
+        print "\e[3mRun $HOME/.dotfiles/install/networking to ensure GPG is properly configured.\e[0m\n" > /dev/stderr
         return 255
     elif [[ ! -e $HOME/.gnupg/$HOSTNAME.key ]]; then
-        printf "\e[31merror: $HOME/.gnupg/$HOSTNAME.key does not exist\e[0m\n" > /dev/stderr
-        printf "\e[3mRun $HOME/.dotfiles/install/networking to ensure GPG is properly configured.\e[0m\n" > /dev/stderr
+        print "\e[31merror: $HOME/.gnupg/$HOSTNAME.key does not exist\e[0m\n" > /dev/stderr
+        print "\e[3mRun $HOME/.dotfiles/install/networking to ensure GPG is properly configured.\e[0m\n" > /dev/stderr
         return 254
     fi
 
-    printf "\e[1mEncrypting backup archive...\e[0m\n"
-    printf "$BACKUP/$(date +%Y-%m-%d).tar.gz -> "
+    print "\e[1mEncrypting backup archive...\e[0m\n"
+    print "$BACKUP/$(date +%Y-%m-%d).tar.gz -> "
     if ! gpg --quiet --batch --yes --recipient sorucoder@proton.me --trust-model always --output $BACKUP/$(date +%Y-%m-%d).tar.gz.gpg --encrypt $BACKUP/$(date +%Y-%m-%d).tar.gz; then
-        printf "\e[32mFailed\e[0m\n"
+        print "\e[32mFailed\e[0m\n"
         return 1
     fi
-    printf "$BACKUP/$(date +%Y-%m-%d).tar.gz.gpg\n"
+    print "$BACKUP/$(date +%Y-%m-%d).tar.gz.gpg\n"
     backup=$backup.gpg
-    printf "\e[32mDone\e[0m\n"
+    print "\e[32mDone\e[0m\n"
 }
 
 function prepare_files() {
@@ -117,29 +126,29 @@ function prepare_files() {
 
 function check_remote_backup_directory() {
     if ! check_applications nmcli ssh; then
-        printf "\e[31merror: nmcli and/or ssh are not available\e[0m\n" > /dev/stderr
-        printf "\e[3mRun $HOME/.dotfiles/install/networking.sh to ensure networking and SSH are properly configured.\e[0m\n" > /dev/stderr
+        print "\e[31merror: nmcli and/or ssh are not available\e[0m\n" > /dev/stderr
+        print "\e[3mRun $HOME/.dotfiles/install/networking.sh to ensure networking and SSH are properly configured.\e[0m\n" > /dev/stderr
         return 255
     fi
 
     if [[ $(nmcli --colors no networking connectivity) == "full" ]]; then
-        printf "\e[1mChecking remote backup directory...\e[0m "
+        print "\e[1mChecking remote backup directory...\e[0m "
         if ! ssh $BACKUP_HOST "(if [[ -d \$HOME/.restore/$HOSTNAME ]]; then echo 'exists'; fi)" 1> /tmp/ssh 2> /dev/null; then
-            printf "\e[31mFailed\e[0m\n"
-            printf "\e[3mRun $HOME/.dotfiles/install/networking to ensure SSH is correctly configured.\e[0m\n" > /dev/stderr
+            print "\e[31mFailed\e[0m\n"
+            print "\e[3mRun $HOME/.dotfiles/install/networking to ensure SSH is correctly configured.\e[0m\n" > /dev/stderr
             return 2
         elif [[ -z $(cat /tmp/ssh) ]]; then
-            printf "\e[32mDone\e[0m\n"
-            printf "\e[1mCreating backup directory...\e[0m "
+            print "\e[32mDone\e[0m\n"
+            print "\e[1mCreating backup directory...\e[0m "
             if ! ssh $BACKUP_HOST "(mkdir -p \$HOME/.restore/$HOSTNAME)" &> /dev/null; then
-                printf "\e[31mFailed\e[0m\n"
-                printf "\e[3mRun $HOME/.dotfiles/install/networking to ensure SSH is correctly configured.\e[0m\n" > /dev/stderr
+                print "\e[31mFailed\e[0m\n"
+                print "\e[3mRun $HOME/.dotfiles/install/networking to ensure SSH is correctly configured.\e[0m\n" > /dev/stderr
                 return 3
             fi
         fi
-        printf "\e[32mDone\e[0m\n"
+        print "\e[32mDone\e[0m\n"
     else
-        printf "\e[31merror: not connected to the internet\e[0m\n" > /dev/stderr
+        print "\e[31merror: not connected to the internet\e[0m\n" > /dev/stderr
         return 1
     fi
 }
@@ -162,31 +171,31 @@ function copy_backup_files_to_remote() {
     fi
 
     if ! check_applications nmcli scp; then
-        printf "\e[31merror: nmcli and/or scp are not available\e[0m\n" > /dev/stderr
-        printf "\e[3mRun $HOME/.dotfiles/install/networking.sh to ensure networking and SSH are properly configured.\e[0m\n" > /dev/stderr
+        print "\e[31merror: nmcli and/or scp are not available\e[0m\n" > /dev/stderr
+        print "\e[3mRun $HOME/.dotfiles/install/networking.sh to ensure networking and SSH are properly configured.\e[0m\n" > /dev/stderr
         return 255
     fi
 
     if [[ $(nmcli --colors no networking connectivity) == "full" ]]; then
-        printf "\e[1mSending %s backup files remotely...\e[0m\n" "$(pretty_print_month $month)"
+        print "\e[1mSending $(pretty_print_month $month) backup files remotely...\e[0m\n"
         if ! scp -BC $BACKUP/$month-*.tar.gz.gpg $BACKUP_HOST:/home/sorucoder/.restore/$HOSTNAME; then
-            printf "\e[31mFailed\e[0m\n"
-            printf "\e[3mRun $HOME/.dotfiles/install/networking to ensure SSH is correctly configured.\e[0m\n" > /dev/stderr
+            print "\e[31mFailed\e[0m\n"
+            print "\e[3mRun $HOME/.dotfiles/install/networking to ensure SSH is correctly configured.\e[0m\n" > /dev/stderr
             return 2
         fi
-        printf "\e[32mDone\e[0m\n"
+        print "\e[32mDone\e[0m\n"
     else
-        printf "\e[31merror: not connected to the internet\e[0m\n" > /dev/stderr
+        print "\e[31merror: not connected to the internet\e[0m\n" > /dev/stderr
         return 1
     fi
 }
 
 function remove_unencrypted_files() {
-    printf "\e[1mRemoving unencrypted backup files...\e[0m "
+    print "\e[1mRemoving unencrypted backup files...\e[0m "
     if [[ -n $(ls $BACKUP/*.tar.gz) ]]; then
         rm $BACKUP/*.tar.gz
     fi
-    printf "\e[32mDone\e[0m\n"
+    print "\e[32mDone\e[0m\n"
 }
 
 function send_backups() {
@@ -196,8 +205,8 @@ function send_backups() {
     fi
 
     if ! check_applications nmcli ssh scp; then
-        printf "\e[31merror: nmcli, ssh, scp and/or cat are not available\e[0m\n" > /dev/stderr
-        printf "\e[3mRun $HOME/.dotfiles/install/networking.sh to ensure networking and SSH are properly configured.\e[0m\n" > /dev/stderr
+        print "\e[31merror: nmcli, ssh, scp and/or cat are not available\e[0m\n" > /dev/stderr
+        print "\e[3mRun $HOME/.dotfiles/install/networking.sh to ensure networking and SSH are properly configured.\e[0m\n" > /dev/stderr
         return 255
     fi
 
@@ -240,6 +249,7 @@ if [[ ! -d $BACKUP ]]; then
     mkdir -p $BACKUP
 fi
 
+logging=false
 while [[ $1 =~ ^--? ]]; do
     option=$1
     if [[ $option == -h || $option == --help ]]; then
@@ -254,12 +264,19 @@ while [[ $1 =~ ^--? ]]; do
             if [[ $1 =~ [0-9]{4}-[0-9]{2} ]]; then
                 send_backups $1
             else
-                printf "\e[31merror: incorrect format for month (must be YYYY-MM)\e[0m\n" > /dev/stderr
+                print "\e[31merror: incorrect format for month (must be YYYY-MM)\e[0m\n" > /dev/stderr
             fi
         else
             send_backups
         fi 
         quit $?
+    elif [[ $option == -o || $option == --output ]]; then
+        logging=true
+        shift; log_file=$1
+        if [[ -z $log_file ]]; then
+            printf "\e[31merror: option \"output\" requires a file path\e[0m\n"
+            print_usage
+        fi
     else
         printf -- "\e[31merror: unknown option %s\e[0m\n" $option > /dev/stderr
         print_usage > /dev/stderr
