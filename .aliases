@@ -268,6 +268,11 @@ function bash_configuration_aliases() {
 
 bash_configuration_aliases
 
+# Cron
+if which fcrontab &> /dev/null; then
+	configuration_alias cron $HOME/.cron/crontab "sudo fcrontab -u $USER $HOME/.cron/crontab" "Applying crontab..."
+fi
+
 #
 # Scripts
 #
