@@ -41,7 +41,7 @@ function install_package() {
 
 function initialize_konsole() {
     printf "\e[1mCopying configuration files for Konsole...\e[0m "
-    if ! cp $HOME/.dotfiles/install/konsole/konsolerc $HOME/.config/konsolerc/; then
+    if ! cp $HOME/.dotfiles/install/konsole/konsolerc $HOME/.config/; then
         printf "\e[31mFailed\e[0m\n"
         return 1
     fi
