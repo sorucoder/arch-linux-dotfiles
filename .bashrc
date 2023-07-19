@@ -31,11 +31,9 @@ function choose_desktop_session() {
 	printf "\n"
 	case $option in
 		1)
-            unset option
             export DESKTOP_SESSION=none
             ;;
 		2)
-            unset option
             export DESKTOP_SESSION=plasma
             ;;
 	esac
@@ -44,7 +42,7 @@ function choose_desktop_session() {
 if [[ -z $DESKTOP_SESSION ]]; then
     choose_desktop_session
     if [[ $DESKTOP_SESSION == plasma ]]; then
-        dbus-run-session startplasma-wayland
+        startplasma-wayland
         logout
     fi
 fi
