@@ -85,8 +85,8 @@ function search_files() {
 }
 
 function compress_backup_files() {
-    print "\e[1mCompressing incremental backup archive...\e[0m "
-    if ! tar --create --gzip --directory $HOME --file $BACKUP/$(date +%Y-%m-%d).tar.gz --listed-incremental $BACKUP/$(date +%Y-%m).snar --files-from $BACKUP/backup_list.txt; then
+    print "\e[1mCompressing incremental backup archive...\e[0m\n"
+    if ! tar --create --gzip --absolute-names --verbose --directory $HOME --file $BACKUP/$(date +%Y-%m-%d).tar.gz --listed-incremental $BACKUP/$(date +%Y-%m).snar --files-from $BACKUP/backup_list.txt; then
         print "\e[31mFailed\e[0m\n"
         return 1
     fi

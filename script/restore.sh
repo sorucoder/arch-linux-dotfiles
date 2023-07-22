@@ -212,12 +212,11 @@ function decompress_backup_file() {
     printf "\e[1mDecompressing incremental backup archives...\e[0m "
     local backup
     for backup in "$(ls $BACKUP/*.tar.gz | sort)"; do
-        if [[ $backup != $BACKUP/$date.tar.gz ]]; then
-            if ! tar --extract --gunzip --directory $HOME --file $backup --listed-incremental /dev/null; then
-                printf "\e[31mFailed\e[0m\n"
-                return 2
-            fi
-        else
+        if ! tar --extract --gunzip --verbose --absolute-names --file $backup --listed-incremental /dev/null --directory $HOME; then
+            printf "\e[31mFailed\e[0m\n"
+            return 2
+        fi
+        if [[ $backup == $BACKUP/$date.tar.gz ]]; then
             break
         fi
     done
@@ -284,19 +283,19 @@ function restore_local() {
 }
 
 function restore() {
-    if [[ -z $remote ]]; then
+    if [[ $remote == true ]]; then
+        if ! restore_remote; then
+            return 1
+        fi
+    elif [[ $remote == false ]]; then
+        if ! restore_local; then
+            return 1
+        fi
+    else
         if ! restore_remote; then
             if ! restore_local; then
                 return 1
             fi
-        fi
-    elif $remote; then
-        if ! restore_remote; then
-            return 1
-        fi
-    else
-        if ! restore_local; then
-            return 1
         fi
     fi
 }
