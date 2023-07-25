@@ -52,9 +52,7 @@ if [[ -e /opt/mssql-tools ]]; then
 fi
 
 # Hererocks integration
-if [[ -e $HOME/.hererocks ]]; then
-    export HEREROCKS=$HOME/.hererocks
-fi
+export HEREROCKS=/opt/hererocks
 
 # Node Version Manager integration
 if [[ -e $HOME/.nvm ]]; then
