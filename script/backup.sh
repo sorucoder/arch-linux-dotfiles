@@ -32,7 +32,7 @@ function print_usage() {
     
     printf "OPTIONS:\n"
     printf "\t-h, --help\t\tPrint this message.\n"
-    printf "\t-l, --list\t\tOnly list the files to be backed up today.\n"
+    printf "\t-l, --list\t\tOnly list the files that will be checked for backup.\n"
     printf "\t-c, --copy [YYYY-MM]\tOnly copy this (or the specified) month's backup to the remote host.\n"
     printf "\t-o, --output\t\tOutput to a log file.\n"
 }
@@ -75,18 +75,21 @@ function search_files() {
     else
         include_paths=$HOME
     fi
-    find $include_paths -regextype posix-extended -type f ! -path '.*/*' ! -path '*/.*' -exec realpath --relative-to $HOME {} \; > /tmp/backup_list.txt
+
+    mkfifo /tmp/backup_list
+    find $include_paths -regextype posix-extended -type f ! -path '.*/*' ! -path '*/.*' -exec realpath --relative-to $HOME {} \; > /tmp/backup_list &
     if [[ -r $BACKUP/exclude.txt ]]; then
-        grep -vf $BACKUP/exclude.txt /tmp/backup_list.txt > $BACKUP/backup_list.txt
+        grep -vf $BACKUP/exclude.txt < /tmp/backup_list > $BACKUP/list.txt
     else
-        cp /tmp/backup_list.txt $BACKUP/backup_list.txt
+        cat backup_list > $BACKUP/list.txt
     fi
+    rm /tmp/backup_list
     print "\e[32mDone\e[0m\n"
 }
 
 function compress_backup_files() {
     print "\e[1mCompressing incremental backup archive...\e[0m\n"
-    if ! tar --create --gzip --absolute-names --verbose --directory $HOME --file $BACKUP/$(date +%Y-%m-%d).tar.gz --listed-incremental $BACKUP/$(date +%Y-%m).snar --files-from $BACKUP/backup_list.txt; then
+    if ! tar --create --gzip --absolute-names --verbose --directory $HOME --file $BACKUP/$(date +%Y-%m-%d).tar.gz --listed-incremental $BACKUP/$(date +%Y-%m).snar --files-from $BACKUP/list.txt; then
         print "\e[31mFailed\e[0m\n"
         return 1
     fi
@@ -106,7 +109,7 @@ function encrypt_backup_files() {
 
     print "\e[1mEncrypting backup archive...\e[0m\n"
     print "$BACKUP/$(date +%Y-%m-%d).tar.gz -> "
-    if ! gpg --quiet --batch --yes --recipient sorucoder@proton.me --trust-model always --output $BACKUP/$(date +%Y-%m-%d).tar.gz.gpg --encrypt $BACKUP/$(date +%Y-%m-%d).tar.gz; then
+    if ! gpg --quiet --batch --yes --recipient sorucoder@proton.me --trust-model always --output $BACKUP/$(date +%Y-%m-%d).tar.gz.gpg --encrypt $BACKUP/$(date +%Y-%m-%d).tar.gz 2>&1; then
         print "\e[32mFailed\e[0m\n"
         return 1
     fi
@@ -178,7 +181,7 @@ function copy_backup_files_to_remote() {
 
     if [[ $(nmcli --colors no networking connectivity) == "full" ]]; then
         print "\e[1mSending $(pretty_print_month $month) backup files remotely...\e[0m\n"
-        if ! scp -BC $BACKUP/$month-*.tar.gz.gpg $BACKUP_HOST:/home/sorucoder/.restore/$HOSTNAME; then
+        if ! scp -BC $BACKUP/$month-*.tar.gz.gpg $BACKUP_HOST:/home/sorucoder/.restore/$HOSTNAME 2>&1; then
             print "\e[31mFailed\e[0m\n"
             print "\e[3mRun $HOME/.dotfiles/install/networking to ensure SSH is correctly configured.\e[0m\n" > /dev/stderr
             return 2
@@ -234,10 +237,10 @@ function backup() {
 function view_files() {
     search_files
     if check_application tree; then
-        tree --fromfile $BACKUP/backup_list.txt > $BACKUP/backup_tree.txt
-        less $BACKUP/backup_tree.txt
+        tree --fromfile $BACKUP/list.txt > $BACKUP/tree.txt
+        less $BACKUP/tree.txt
     else
-        less $BACKUP/backup_list.txt
+        less $BACKUP/list.txt
     fi
 }
 
