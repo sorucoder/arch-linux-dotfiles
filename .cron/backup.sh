@@ -9,10 +9,9 @@ function email_message() {
 }
 
 printf "Beginning backup at $(date -Is)...\n" >> /var/log/cron/backup.log
-notify-send --app-name=Backup --icon=preferences-system-backup --urgency=CRITICAL "Backup" "Beginning backup..."
 if $HOME/.dotfiles/script/backup.sh -o /var/log/cron/backup.log; then
-    notify-send --app-name=Backup --icon=preferences-system-backup --urgency=CRITICAL "Backup" "Daily backup succeeded."
+    printf "Backup succeeeded" >> /var/log/cron/backup.log
 else
-    notify-send --app-name=Backup --icon=preferences-system-backup --urgency=CRITICAL "Backup" "Daily backup failed."
+	printf "Backup failed" >> /var/log/cron/backup.log
     email_message | mailx -M "text/html" -s "Backup Failed" sorucoder@proton.me
 fi

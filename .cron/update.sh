@@ -14,4 +14,3 @@ if ! paru --noconfirm | sed -e 's/\x1b\[[0-9;]*m//g' >> /var/log/cron/update.log
     notify-send --app-name="System Update" --icon=system-software-update --urgency=CRITICAL "System Update" "Daily backup failed."
     email_message | mailx -M "text/html" -s "Update Failed" sorucoder@proton.me
 fi
-reboot
