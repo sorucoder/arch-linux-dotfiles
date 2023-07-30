@@ -5,6 +5,7 @@ export DOTFILES=$HOME/.dotfiles
 
 # Backup and Restore integration
 export BACKUP=$HOME/.backup
+export BACKUP_GPG_RECIPIENT=sorucoder@proton.me
 export BACKUP_HOST=sorucoder-server
 
 # Powerline integration

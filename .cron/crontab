@@ -1,3 +1,4 @@
 BACKUP=/home/sorucoder/.backup
 BACKUP_HOST=sorucoder@sorucoder-server
+BACKUP_GPG_RECIPIENT=sorucoder@proton.me
 0 2 * * * /home/sorucoder/.cron/backup.sh > /dev/null 2>&1
