@@ -168,10 +168,8 @@ sudo_alias ufw
 sudo_alias sysctl=systemctl
 sudo_alias reboot
 
-#
 # Hererocks
-#
-if [[ -n $HEREROCKS ]]; then
+if [[ -r $HEREROCKS ]]; then
 	function hererocks_aliases() {
 		if [[ ! -d $HEREROCKS ]]; then
 			print_warning "cannot find hererocks directory; not adding hererocks aliases"
@@ -226,7 +224,6 @@ if which sshd &> /dev/null; then
 fi
 
 # Nano
-
 if which nano &> /dev/null; then
     configuration_alias nano-user $HOME/.nano/user.nanorc
     configuration_alias nano-root $HOME/.nano/root.nanorc
@@ -234,21 +231,21 @@ if which nano &> /dev/null; then
 fi
 
 # Git
-
 if which git &> /dev/null; then
     configuration_alias git $HOME/.gitconfig
 fi
 
 # Apache
-
 if which httpd &> /dev/null; then
 	configuration_alias apache /etc/httpd/conf/httpd.conf "sudo systemctl reload httpd" "Reloading Apache..."
+fi
+
+# PHP
+if which php &> /dev/null; then
 	configuration_alias php /etc/php/php.ini "sudo systemctl reload httpd" "Reloading Apache..."
 fi
 
-#
-# Bash Configurations
-#
+# Bash
 function bash_configuration_aliases() {
 	local reload
 	if ! shopt -q login_shell; then
@@ -280,10 +277,7 @@ fi
 alias backup=$DOTFILES/script/backup.sh
 alias restore=$DOTFILES/script/restore.sh
 
-#
 # Installation Scripts
-#
-
 alias install-networking=$DOTFILES/install/networking/networking.sh
 alias install-cron=$DOTFILES/install/cron/cron.sh
 alias install-konsole=$DOTFILES/install/konsole.sh
