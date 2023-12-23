@@ -42,5 +42,5 @@ if [[ $DESKTOP_SESSION == plasma ]]; then
     install_package code-features "Visual Studio Code Features" && \
     install_package ttf-firacode "FiraCode Font" && \
     install_package okteta "Okteta Hex Editor"
+    quit $?
 fi
-quit $?
