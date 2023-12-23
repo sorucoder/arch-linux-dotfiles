@@ -164,7 +164,7 @@ function update_ssh_clients() {
 }
 
 function initialize_ssh() {
-    if ! check_application ssh_keygen; then
+    if ! check_application ssh-keygen; then
         printf "\e[31merror: ssh was not properly installed.\e[0m\n"
 		printf "\e[3mPlease try removing ssh and try this script again.\e[0m\n"
 		return 255
