@@ -10,7 +10,7 @@ function quit() {
 function check_application() {
     local application=$1
 
-    if [[ -z ${application[$application]} ]]; then
+    if [[ -z ${applications[$application]} ]]; then
         if which $application &> /dev/null; then
             applications[$application]=true
         else
