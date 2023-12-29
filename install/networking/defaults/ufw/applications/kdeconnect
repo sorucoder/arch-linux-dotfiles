@@ -1,4 +1,0 @@
-[KDEConnect]
-title=KDE Connect
-description=Cross-device communications software
-ports=1714:1764/udp|1714:1764/tcp
