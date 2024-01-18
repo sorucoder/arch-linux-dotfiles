@@ -107,9 +107,9 @@ function configuration_alias() {
 
     editor=$EDITOR
     if touch -c $file 2>&1 | grep -q "Permission denied"; then
-    	editor=$SUDO_EDITOR
+		editor=$SUDO_EDITOR
     elif [[ ! -e $file ]]; then
-    	print_warning "\"$file\" does not exist; configuration_alias will assume unpriviledged editing"
+		print_warning "\"$file\" does not exist; configuration_alias will assume unpriviledged editing"
 	fi
 
 	if [[ -z $reload_command ]]; then
@@ -238,6 +238,7 @@ fi
 # Apache
 if which httpd &> /dev/null; then
 	configuration_alias apache /etc/httpd/conf/httpd.conf "sudo systemctl reload httpd" "Reloading Apache..."
+	configuration_alias apache-virtual-hosts /etc/httpd/conf/extra/httpd-vhosts.conf "sudo systemctl reload httpd" "Reloading Apache..."
 fi
 
 # PHP
